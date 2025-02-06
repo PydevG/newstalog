@@ -24,8 +24,10 @@ def analytics_dashboard(request):
 
 def homeview(request):
     featured_posts = Blog.objects.filter(is_published=True, is_approved=True)
+    all_posts = Blog.objects.all()
     context = {
         'featured_posts':featured_posts,
+        'all_posts':all_posts,
     }
     return render(request, 'blogs/index.html', context)
 

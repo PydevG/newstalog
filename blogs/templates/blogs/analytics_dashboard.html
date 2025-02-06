@@ -1,15 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Analytics</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Page Header -->
+        <div class="text-center mb-4">
+            <h2 class="display-4">Visitor Analytics</h2>
+        </div>
 
-<h2>Visitor Analytics</h2>
+        <!-- Most Visited Pages Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title">Most Visited Pages</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for page in most_visited %}
+                        <li class="list-group-item">
+                            <strong>{{ page.url }}</strong> - <span class="badge bg-primary">{{ page.visits }} visits</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
 
-<h3>Most Visited Pages</h3>
-<ul>
-    {% for page in most_visited %}
-        <li>{{ page.url }} - {{ page.visits }} visits</li>
-    {% endfor %}
-</ul>
+        <!-- Average Time Spent Per Page Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title">Average Time Spent Per Page</h3>
+            </div>
+            <div class="card-body">
+                <p class="lead">
+                    {{ avg_time_spent|default:"No data yet" }} seconds
+                </p>
+            </div>
+        </div>
 
-<h3>Average Time Spent Per Page</h3>
-<p>{{ avg_time_spent|default:"No data yet" }} seconds</p>
+        <!-- Unique Visitors Section -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Unique Visitors</h3>
+            </div>
+            <div class="card-body">
+                <p class="lead">
+                    {{ unique_visitors }}
+                </p>
+            </div>
+        </div>
+    </div>
 
-<h3>Unique Visitors</h3>
-<p>{{ unique_visitors }}</p>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

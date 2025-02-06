@@ -23,8 +23,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # 'django_plotly_dash.apps.DjangoPlotlyDashConfig',
-    'django_plotly_dash',
+    'django_plotly_dash.apps.DjangoPlotlyDashConfig',
+    # 'django_plotly_dash',
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
