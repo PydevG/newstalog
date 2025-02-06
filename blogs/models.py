@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils.text import slugify 
+from django.utils.text import slugify
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
+from django.conf import settings
+
+# User = get_user_model()
 
 # Create your models here.
 CATEGORY_CHOICES = [
@@ -27,10 +32,11 @@ CATEGORY_CHOICES = [
 
 class Blog(models.Model):
     title = models.CharField(max_length=150)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    image = models.ImageField(upload_to='blogs', default='')
     slug = models.SlugField(unique=True, blank=True)
     category = models.CharField(max_length=25, choices= CATEGORY_CHOICES, default='OTHER')
     
@@ -47,3 +53,25 @@ class Blog(models.Model):
         
         def __str__(self):
             return self.title
+
+
+class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=8, unique=True)
+    profile_photo = models.ImageField(upload_to='profiles')
+    date_of_birth = models.DateField(blank=True)
+    
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='customuser_set',  # ✅ Avoids clash
+        blank=True
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='customuser_permissions_set',  # ✅ Avoids clash
+        blank=True
+    )
+    
+    def __str__(self):
+        return self.username
+    
