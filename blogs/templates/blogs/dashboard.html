@@ -1,0 +1,35 @@
+<!-- blogs/dashboard.html -->
+{% load plotly_dash %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Analytics Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to the Analytics Dashboard</h1>
+    {% plotly_app name="Analytics" %}
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard</title>
+    {% load plotly_dash %}
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome to the Analytics Dashboard</h2>
+        <div class="row">
+            <div class="col-md-12">
+                {% plotly_app name="AnalyticsDashboard" %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -43,3 +43,6 @@ def aboutview(request):
 
 def contactview(request):
     return render(request, 'blogs/contact.html')
+
+# def dashboard(request):
+#     return render(request, 'blogs/dashboard.html')

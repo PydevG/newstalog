@@ -20,6 +20,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # 'django_plotly_dash.apps.DjangoPlotlyDashConfig',
+    'django_plotly_dash',
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -28,7 +30,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blogs',
-    'rest_framework',
+    'rest_framework', 
+    'channels',  # optional for real-time functionality
 ]
 
 MIDDLEWARE = [

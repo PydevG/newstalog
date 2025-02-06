@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+# from django_plotly_dash.views import show
 
 urlpatterns = [
     path('', views.homeview, name='Home'),
@@ -10,4 +11,5 @@ urlpatterns = [
     path('post/', views.singlepostview, name='single-post'),
     path('category/', views.categoryview, name='category'),
     path('analytics/', views.analytics_dashboard, name='analytics_dashboard'),
+    # path('dashboard/', views.dashboard, name='dashboard')
 ]
