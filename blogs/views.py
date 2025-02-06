@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from django.db.models import Count, Avg, F, ExpressionWrapper, fields
-from .models import PageVisit
+from .models import *
 
 def analytics_dashboard(request):
     """Display analytics of page visits"""
@@ -23,7 +23,11 @@ def analytics_dashboard(request):
 
 
 def homeview(request):
-    return render(request, 'blogs/index.html')
+    featured_posts = Blog.objects.filter(is_published=True, is_approved=True)
+    context = {
+        'featured_posts':featured_posts,
+    }
+    return render(request, 'blogs/index.html', context)
 
 def singlepostview(request):
     return render(request, 'blogs/single-post.html')

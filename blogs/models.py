@@ -81,8 +81,8 @@ class Blog(models.Model):
             self.slug = slug
         super().save(*args, **kwargs)
         
-        def __str__(self):
-            return self.title
+    def __str__(self):
+        return self.title
         
 class Comment(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='comments')

@@ -2,6 +2,9 @@ from decouple import config
 import dj_database_url
 from pathlib import Path
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -69,14 +72,16 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': config('DATABASE_ENGINE'),
-        'NAME': config('DATABASE_NAME'),
-        'USER': config('DATABASE_USER'),
-        'PASSWORD': config('DATABASE_PASSWORD'),
-        'HOST': config('DATABASE_HOST', default='localhost'),
-        'PORT': config('DATABASE_PORT', default=5432, cast=int),
+        'ENGINE': 'django.db.backends.mysql',  # Change this from 'postgresql' to 'mysql'
+        'NAME': 'blogs',
+        'USER': 'adminuser',
+        'PASSWORD': '@abc123AC',
+        'HOST': 'localhost',
+        'PORT': '3306',  # Default MySQL port
     }
 }
+
+
 
 
 
