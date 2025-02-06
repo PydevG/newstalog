@@ -121,7 +121,7 @@ class ContactMessage(models.Model):
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=8, unique=True)
-    date_of_birth = models.DateField(blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
     
     groups = models.ManyToManyField(
         'auth.Group',
