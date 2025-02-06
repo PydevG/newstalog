@@ -1,0 +1,19 @@
+{% extends 'blogs.index.html' %}
+
+{% block content %}
+<h2>Visitor Analytics</h2>
+
+<h3>Most Visited Pages</h3>
+<ul>
+    {% for page in most_visited %}
+        <li>{{ page.url }} - {{ page.visits }} visits</li>
+    {% endfor %}
+</ul>
+
+<h3>Average Time Spent Per Page</h3>
+<p>{{ avg_time_spent|default:"No data yet" }} seconds</p>
+
+<h3>Unique Visitors</h3>
+<p>{{ unique_visitors }}</p>
+
+{% endblock %}
