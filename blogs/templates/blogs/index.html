@@ -76,7 +76,8 @@
       
       <!-- POSTS (MIDDLE) -->
       <div class="col-lg-5">
-        <div class="row g-5 mt-5">
+        <b><center><h2>Latest blogs</h2></center></b>
+        <div class="row g-5 mt-2">
           {% for post in page_obj %}
           {% if forloop.counter0|divisibleby:2 %} <!-- Start new row every 2 posts -->
           <div class="row">
@@ -99,21 +100,43 @@
           {% endif %}
           {% endfor %}
 
-        <div class="pagination">
-  {% if page_obj.has_previous %}
-    <a href="?page=1">First</a>
-    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-  {% endif %}
 
-  <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-
-  {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}">Next</a>
-    <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-  {% endif %}
-</div>
 
         </div>
+<nav aria-label="Page navigation">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1" aria-label="First">
+          <span>&laquo;&laquo;</span> <!-- Double left arrow -->
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+          <span>&laquo;</span> <!-- Single left arrow -->
+        </a>
+      </li>
+    {% endif %}
+
+    <li class="page-item disabled">
+      <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    </li>
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+          <span>&raquo;</span> <!-- Single right arrow -->
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+          <span>&raquo;&raquo;</span> <!-- Double right arrow -->
+        </a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
+
       </div>
 
 
