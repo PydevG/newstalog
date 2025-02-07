@@ -27,12 +27,12 @@ def homeview(request):
     all_posts = Blog.objects.all()
     trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)
     headline_posts = Blog.objects.filter(is_headline=True, is_approved=True)
-    slide_posts = Blog.objects.filter(to_slide=True, is_approved=True)
+    slide_posts = Blog.objects.filter(to_slide=True, is_approved=True)[:3]
     context = {
         'featured_posts':featured_posts,
         'all_posts':all_posts,
         'trending_posts':trending_posts,
-        'slide posts':slide_posts,
+        'slide_posts':slide_posts,
         'headline_posts':headline_posts,
     }
     return render(request, 'blogs/index.html', context)

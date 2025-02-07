@@ -457,7 +457,7 @@ section {
   margin-bottom: 30px;
 }
 
-.post-entry-1 img {
+.post-entry-1 img{
   margin-bottom: 30px;
 }
 
@@ -477,6 +477,15 @@ section {
   font-size: 40px;
   line-height: 1;
 }
+
+/* Ensure all post images are the same size */
+.mainpost img {
+  width: 100%;         /* Make images responsive */
+  height: 200px;       /* Fixed height for consistency */
+  object-fit: cover;   /* Maintain aspect ratio, crop if necessary */
+  margin-bottom: 30px;
+}
+
 
 .post-meta {
   font-size: 11px;
