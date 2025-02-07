@@ -50,7 +50,7 @@
         <div class="post-entry-1 lg">
           <a href="single-post.html"><img src="{{ post.image.url }}" alt="" class="img-fluid"></a>
           <div class="post-meta">
-            <span class="date">{{ post.categories.first.name }}</span>
+            <span class="date">{{ post.category.name }}</span>
             <span class="mx-1">&bullet;</span>
             <span>{{  post.created_at|date:"jS M Y | g:iA" }}</span>
           </div>
@@ -58,7 +58,14 @@
           <p class="mb-4 d-block">{{ post.content | truncatewords:55 }}</p>
 
           <div class="d-flex align-items-center author">
-            <div class="photo"><img src="{{ post.author.profile.profile_image.url }}" alt="" class="img-fluid"></div>
+            
+            <div class="photo">
+              {% if post.author.profile and post.author.profile.profile_picture %}
+                <img src="{{ post.author.profile.profile_picture.url }}" alt="" class="img-fluid">
+              {% else %}
+                <img src="{% static 'img/person-1.jpg' %}" alt="Default Profile" class="img-fluid">
+              {% endif %}
+            </div>
             <div class="name">
               <h3 class="m-0 p-0">{{ post.author.username }}</h3>
             </div>
@@ -69,8 +76,8 @@
       
       <!-- POSTS (MIDDLE) -->
       <div class="col-lg-5">
-        <div class="row g-5">
-          {% for post in all_posts %}
+        <div class="row g-5 mt-5">
+          {% for post in page_obj %}
           {% if forloop.counter0|divisibleby:2 %} <!-- Start new row every 2 posts -->
           <div class="row">
           {% endif %}
@@ -79,7 +86,7 @@
               <div class="post-entry-1 mainpost">
                 <a href="single-post.html"><img src="{{ post.image.url }}" alt="" class="img-fluid"></a>
                 <div class="post-meta">
-                  <span class="date">{{ post.categories.first.name }}</span>
+                  <span class="date">{{ post.category.name }}</span>
                   <span class="mx-1">&bullet;</span>
                   <span>{{  post.created_at|date:"jS M Y | g:iA" }}</span>
                 </div>
@@ -91,8 +98,24 @@
           </div>
           {% endif %}
           {% endfor %}
+
+        <div class="pagination">
+  {% if page_obj.has_previous %}
+    <a href="?page=1">First</a>
+    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+  {% endif %}
+
+  <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+  {% endif %}
+</div>
+
         </div>
       </div>
+
 
       <!-- TRENDING (RIGHT) -->
       <div class="col-lg-3">

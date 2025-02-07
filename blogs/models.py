@@ -68,7 +68,7 @@ class Blog(models.Model):
     updated = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='blogs', default='')
     slug = models.SlugField(unique=True, blank=True)
-    categories = models.ManyToManyField('Category', related_name='blogs', blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
     tags = models.ManyToManyField('Tag', related_name='blogs', blank=True)
     is_published = models.BooleanField(default=False)
     is_trending = models.BooleanField(default=False)

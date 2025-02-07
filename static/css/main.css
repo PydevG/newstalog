@@ -931,12 +931,6 @@ section {
   border: 1px solid rgba(var(--color-black-rgb), 0.5);
 }
 
-/*--------------------------------------------------------------
-# Comments
---------------------------------------------------------------*/
-.comment {
-  /* Font not working in <textarea> for this version of bs */
-}
 
 .comment .avatar {
   position: relative;
