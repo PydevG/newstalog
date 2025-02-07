@@ -71,8 +71,10 @@ class Blog(models.Model):
     categories = models.ManyToManyField('Category', related_name='blogs', blank=True)
     tags = models.ManyToManyField('Tag', related_name='blogs', blank=True)
     is_published = models.BooleanField(default=False)
+    is_trending = models.BooleanField(default=False)
     is_approved = models.BooleanField(default=False)
-    
+    is_headline = models.BooleanField(default=False)
+    to_slide = models.BooleanField(default=False)
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.title)
