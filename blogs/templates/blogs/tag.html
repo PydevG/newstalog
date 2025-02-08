@@ -76,7 +76,7 @@
       
       <!-- POSTS (MIDDLE) -->
       <div class="col-lg-5">
-        <b><center><h2 class="bg-danger text-white ">{{tag.name}} posts</h2></center></b>
+        <b><center><h4 class="">posts with tag <span class="bg-primary text-white p-1">'{{tag.name}}'</span></h4></center></b>
         <div class="row g-5 mt-2">
           {% for post in page_obj %}
           {% if forloop.counter0|divisibleby:2 %} <!-- Start new row every 2 posts -->

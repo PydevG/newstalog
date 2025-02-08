@@ -46,7 +46,7 @@ def singlepostview(request, slug):
     post = get_object_or_404(Blog, slug=slug)
     categories = Category.objects.all()
     trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)[:5]
-    latest_posts = Blog.objects.all().order_by('-created_at')[:6]
+    latest_posts = Blog.objects.all().order_by('-created_at')[:5]
     context = {
         "post":post,
         'categories':categories,
@@ -81,8 +81,24 @@ def loginview(request):
     return render(request, 'blogs/login.html')
 
 
-def categoryview(request):
-    return render(request, 'blogs/category.html')
+def categoryview(request, slug):
+    categories = Category.objects.filter(slug=slug)
+    all_categories = Category.objects.all()
+    category_posts = Blog.objects.filter(category__slug=slug)
+    trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)[:5]
+    latest_posts = Blog.objects.all().order_by('-created_at')[:5]
+    paginator = Paginator(category_posts, 3)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        "categories":categories,
+        "category_posts":category_posts,
+        'trending_posts':trending_posts,
+        'latest_posts':latest_posts,
+        'all_categories':all_categories,
+        'page_obj':page_obj,
+    }
+    return render(request, 'blogs/category.html', context)
 
 def aboutview(request):
     return render(request, 'blogs/about.html')
