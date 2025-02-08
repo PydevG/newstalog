@@ -3,6 +3,7 @@ from django.views import View
 from django.db.models import Count, Avg, F, ExpressionWrapper, fields
 from .models import *
 from django.core.paginator import Paginator
+from django.contrib import messages
 
 def analytics_dashboard(request):
     """Display analytics of page visits"""
@@ -43,6 +44,17 @@ def homeview(request):
     return render(request, 'blogs/index.html', context)
 
 def singlepostview(request, slug):
+    if request.method == 'POST':
+        message = request.POST.get('message')
+        blog = get_object_or_404(Blog, slug=slug)
+        Comment.objects.create(
+            blog=blog,
+            author=request.user.username,
+            content=content
+        )
+
+        return redirect("blogs:single-post", slug=blog.slug)  # Redirect to the post page
+
     post = get_object_or_404(Blog, slug=slug)
     categories = Category.objects.all()
     trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)[:5]
