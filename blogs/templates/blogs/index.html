@@ -15,7 +15,7 @@
 
               {% for post in slide_posts %}
                 <div class="swiper-slide">
-                  <a href="single-post.html" class="img-bg d-flex align-items-end" style="background-image: url('{{post.image.url}}');">
+                  <a href="{% url 'blogs:single-post' post.slug %}" class="img-bg d-flex align-items-end" style="background-image: url('{{post.image.url}}');">
                     <div class="img-bg-inner">
                       <h2>{{post.title}}</h2>
                       <p>{{post.content | truncatewords:15 }}</p>
@@ -45,16 +45,16 @@
 
       <!-- HEADLINES (LEFT) -->
       <div class="col-lg-4">
-        <h2>HEADLINES</h2>
+        <h2 class="text-danger">HEADLINES</h2>
         {% for post in headline_posts %}
         <div class="post-entry-1 lg">
-          <a href="single-post.html"><img src="{{ post.image.url }}" alt="" class="img-fluid"></a>
+          <a href="{% url 'blogs:single-post' post.slug %}"><img src="{{ post.image.url }}" alt="" class="img-fluid"></a>
           <div class="post-meta">
             <span class="date">{{ post.category.name }}</span>
             <span class="mx-1">&bullet;</span>
             <span>{{  post.created_at|date:"jS M Y | g:iA" }}</span>
           </div>
-          <h2><a href="single-post.html">{{ post.title }}</a></h2>
+          <h2><a href="{% url 'blogs:single-post' post.slug %}">{{ post.title }}</a></h2>
           <p class="mb-4 d-block">{{ post.content | truncatewords:55 }}</p>
 
           <div class="d-flex align-items-center author">
@@ -76,7 +76,7 @@
       
       <!-- POSTS (MIDDLE) -->
       <div class="col-lg-5">
-        <b><center><h2>Latest blogs</h2></center></b>
+        <b><center><h2 class="bg-danger text-white ">Latest blogs</h2></center></b>
         <div class="row g-5 mt-2">
           {% for post in page_obj %}
           {% if forloop.counter0|divisibleby:2 %} <!-- Start new row every 2 posts -->
@@ -85,13 +85,13 @@
 
             <div class="col-md-6">
               <div class="post-entry-1 mainpost">
-                <a href="single-post.html"><img src="{{ post.image.url }}" alt="" class="img-fluid"></a>
+                <a href="{% url 'blogs:single-post' post.slug %}"><img src="{{ post.image.url }}" alt="" class="img-fluid"></a>
                 <div class="post-meta">
                   <span class="date">{{ post.category.name }}</span>
                   <span class="mx-1">&bullet;</span>
                   <span>{{  post.created_at|date:"jS M Y | g:iA" }}</span>
                 </div>
-                <h2><a href="single-post.html">{{ post.title }}</a></h2>
+                <h2><a href="{% url 'blogs:single-post' post.slug %}">{{ post.title }}</a></h2>
               </div>
             </div>
 
@@ -147,7 +147,7 @@
           <ul class="trending-post">
             {% for post in trending_posts %}
             <li>
-              <a href="single-post.html">
+              <a href="{% url 'blogs:single-post' post.slug %}">
                 <span class="number">{{ forloop.counter }}</span>
                 <h3>{{ post.title }}</h3>
                 <span class="author">{{ post.author.username }}</span>

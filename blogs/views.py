@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.db.models import Count, Avg, F, ExpressionWrapper, fields
 from .models import *
@@ -42,8 +42,37 @@ def homeview(request):
     }
     return render(request, 'blogs/index.html', context)
 
-def singlepostview(request):
-    return render(request, 'blogs/single-post.html')
+def singlepostview(request, slug):
+    post = get_object_or_404(Blog, slug=slug)
+    categories = Category.objects.all()
+    trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)[:5]
+    latest_posts = Blog.objects.all().order_by('-created_at')[:6]
+    context = {
+        "post":post,
+        'categories':categories,
+        'trending_posts':trending_posts,
+        'latest_posts':latest_posts,
+    }
+    return render(request, 'blogs/single-post.html', context)
+
+def tagview(request, slug):
+    tag = get_object_or_404(Tag, slug=slug)
+    posts = Blog.objects.filter(tags__slug=slug).select_related('author', 'category').prefetch_related('tags')
+    headline_posts = Blog.objects.filter(is_headline=True, is_approved=True)
+    trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)[:5]
+    paginator = Paginator(posts, 4)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        "posts": posts, 
+        "tag": tag,
+        "page_obj":page_obj,
+        "headline_posts":headline_posts,
+        "trending_posts":trending_posts,
+    }
+    return render(request, 'blogs/tag.html', context)
+
 
 def registrationview(request):
     return render(request, 'blogs/registration.html')
