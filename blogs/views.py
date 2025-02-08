@@ -106,7 +106,7 @@ def loginview(request):
 
 
 def categoryview(request, slug):
-    categories = Category.objects.filter(slug=slug)
+    category = Category.objects.filter(slug=slug)
     all_categories = Category.objects.all()
     category_posts = Blog.objects.filter(category__slug=slug)
     trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)[:5]
@@ -115,7 +115,7 @@ def categoryview(request, slug):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
-        "categories":categories,
+        "category":category,
         "category_posts":category_posts,
         'trending_posts':trending_posts,
         'latest_posts':latest_posts,
