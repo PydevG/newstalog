@@ -95,6 +95,9 @@ class Comment(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        unique_together = ('blog', 'author')  # Ensures one comment per user per blog
+    
 
     def __str__(self):
         return f'Comment by {self.author} on {self.blog}'

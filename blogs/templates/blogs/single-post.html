@@ -26,59 +26,62 @@
 
             <!-- ======= Comments ======= -->
             <div class="comments">
-              <h5 class="comment-title py-4">2 Comments</h5>
-              </div>
-
-
-              <div class="comment d-flex">
+              <h5 class="comment-title py-4">Comments</h5>
+              {% for comment in comments %}
+              <div class="comment d-flex mb-4">
                 <div class="flex-shrink-0">
                   <div class="avatar avatar-sm rounded-circle">
-                    <img class="avatar-img" src="{% static 'img/person-2.jpg' %}" alt="" class="img-fluid">
+                    <img class="avatar-img" src="{{comment.author.profile.profile_picture.url}}" alt="" class="img-fluid">
                   </div>
                 </div>
-                <div class="flex-shrink-1 ms-2 ms-sm-3">
-                  <div class="comment-meta d-flex">
-                    <h6 class="me-2">Santiago Roberts</h6>
-                    <span class="text-muted">4d</span>
+                <div class="flex-grow-1 ms-2 ms-sm-3">
+                  <div class="comment-meta d-flex align-items-baseline">
+                    <h6 class="me-2">{{comment.author.username}}</h6>
+                    <span class="text-muted">{{ comment.created_at|timesince }} ago</span>
                   </div>
                   <div class="comment-body">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto laborum in corrupti dolorum, quas delectus nobis porro accusantium molestias sequi.
+                    {{comment.content}}
                   </div>
+                  
                 </div>
               </div>
+              {% endfor %}
 
+              
 
+              
             </div><!-- End Comments -->
 
-          <!-- ======= Comments Form ======= -->
-          <div class="row justify-content-center mt-5">
-            <div class="col-lg-12">
-              <h5 class="comment-title">Leave a Comment</h5>
+            <!-- ======= Comments Form ======= -->
+            <div class="row justify-content-center mt-5">
 
-              <div class="row">
-                <form action="" method="POST">
-                  {% csrf_token %}
+              <div class="col-lg-12">
+                <h5 class="comment-title">Leave a Comment</h5>
 
+                <div class="row">
+                  <form action="" method="POST">
+                    {% csrf_token %}
+                  <div class="col-lg-6 mb-3">
+                    <label for="comment-name">Name</label>
+                    <input type="text" class="form-control bg-light text-dark" name="name" value="{{request.user.username}}" readonly>
+                  </div>
                   <div class="col-lg-6 mb-3">
                     <label for="comment-email">Email</label>
-                    <input type="email" class="form-control" name="email" value="{{ request.user.email }}" readonly>
+                    <input type="text" class="form-control bg-light text-dark" name="email" value="{{request.user.email}}" readonly>
                   </div>
-
                   <div class="col-12 mb-3">
                     <label for="comment-message">Message</label>
-                    <textarea class="form-control" name="message" placeholder="Enter your comment" cols="10" rows="4" required></textarea>
-                  </div>
 
-                  <!-- Submit Button -->
+                    <textarea class="form-control" id="comment-message" name="message" placeholder="Enter your Comment" cols="5" rows="5"></textarea>
+                    <small id="word-count" class="text-muted">0/40 words</small>
+                  </div>
                   <div class="col-12">
-                    <input type="submit" class="btn btn-primary">
+                    <input type="submit" value="Comment" class="btn btn-primary" >
                   </div>
-
-                </form>
+                  </form>
+                </div>
               </div>
-            </div>
-          </div>
-          <!-- End Comments Form -->
+            </div><!-- End Comments Form -->
 
           </div>
           <div class="col-md-3">
@@ -147,6 +150,33 @@
       </div>
     </section>
   </main><!-- End #main -->
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const textarea = document.getElementById("comment-message");
+    const wordCountDisplay = document.getElementById("word-count");
+
+    textarea.addEventListener("input", function () {
+      let words = this.value.trim().split(/\s+/).filter(word => word.length > 0);
+
+      if (words.length > 40) {
+        // Prevent additional typing by removing extra words
+        this.value = words.slice(0, 40).join(" ");
+      }
+
+      wordCountDisplay.textContent = `${words.length}/40 words`;
+    });
+
+    textarea.addEventListener("keydown", function (event) {
+      let words = this.value.trim().split(/\s+/).filter(word => word.length > 0);
+
+      if (words.length >= 40 && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
+        event.preventDefault(); // Stop typing if word limit is reached
+      }
+    });
+  });
+</script>
+
 
 {% endblock main%}
 

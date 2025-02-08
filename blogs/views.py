@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.db.models import Count, Avg, F, ExpressionWrapper, fields
 from .models import *
@@ -29,6 +29,8 @@ def homeview(request):
     all_posts = Blog.objects.all().order_by('-created_at')
     trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)[:5]
     headline_posts = Blog.objects.filter(is_headline=True, is_approved=True)
+    categories = Category.objects.all()
+    latest_posts = Blog.objects.all().order_by('-created_at')[:5]
     slide_posts = Blog.objects.filter(to_slide=True, is_approved=True)[:3]
     paginator = Paginator(all_posts, 4)
     page_number = request.GET.get('page')
@@ -40,18 +42,26 @@ def homeview(request):
         'slide_posts':slide_posts,
         'headline_posts':headline_posts,
         'page_obj':page_obj,
+        'categories':categories,
+        'latest_posts':latest_posts
     }
     return render(request, 'blogs/index.html', context)
 
 def singlepostview(request, slug):
     if request.method == 'POST':
-        message = request.POST.get('message')
-        blog = get_object_or_404(Blog, slug=slug)
-        Comment.objects.create(
-            blog=blog,
-            author=request.user.username,
-            content=content
-        )
+        if request.user.is_authenticated:
+            message = request.POST.get('message')
+            blog = get_object_or_404(Blog, slug=slug)
+            if Comment.objects.filter(blog=blog, author=request.user).exists():
+                messages.error(request, "You have already commented on this post.")
+            else:
+                blog = get_object_or_404(Blog, slug=slug)
+                # Save the comment
+                content = request.POST.get("message")
+                Comment.objects.create(blog=blog, author=request.user, content=message)
+                messages.success(request, "Your comment has been posted.")
+        else:
+            messages.error(request, "You need to be logged in to comment.")
 
         return redirect("blogs:single-post", slug=blog.slug)  # Redirect to the post page
 
@@ -59,11 +69,13 @@ def singlepostview(request, slug):
     categories = Category.objects.all()
     trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)[:5]
     latest_posts = Blog.objects.all().order_by('-created_at')[:5]
+    comments = Comment.objects.filter(blog__slug=slug)[:4]
     context = {
         "post":post,
         'categories':categories,
         'trending_posts':trending_posts,
         'latest_posts':latest_posts,
+        'comments':comments,
     }
     return render(request, 'blogs/single-post.html', context)
 
