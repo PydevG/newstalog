@@ -1,54 +1,54 @@
-
+{% extends 'blogs/authbase.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    
-    <!-- Google Font - Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+
+{% block cssimports %}
 
     <!-- Boxicons -->
     <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/auth.css' %}">
-</head>
-<body>
-    <div class="container">
-        <div class="form-container">
-            <!-- Login Form -->
-            <div class="form login active">
-                <h2>Login</h2>
-                <form action="" method="POST">
-                  {% csrf_token %}
-                    <div class="input-group">
-                        <i class="bx bx-envelope"></i>
-                        <input type="email" placeholder="Email" name="email" required>
-                    </div>
+    
+{% endblock cssimports %}
+    
 
-                    <div class="input-group">
-                        <i class="bx bx-lock"></i>
-                        <input type="password" placeholder="Password" name="password" class="password" required>
-                        <i class='bx bx-hide eye-icon'></i>
-                    </div>
+{% block main %}
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="form-container">
+        <!-- Login Form -->
+        <div class="form login active">
+            <h2>Login</h2>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="input-group">
+                    <i class="bx bx-envelope"></i>
+                    <input type="email" placeholder="Email" name="email" required>
+                </div>
 
-                    <div class="forgot-password">
-                        <a href="{% url 'blogs:forgot'%}">Forgot Password?</a>
-                    </div>
+                <div class="input-group">
+                    <i class="bx bx-lock"></i>
+                    <input type="password" placeholder="Password" name="password" class="password" required>
+                    <i class='bx bx-hide eye-icon'></i>
+                </div>
 
-                    <button type="submit" class="btn">Login</button>
+                <div class="forgot-password">
+                    <a href="{% url 'blogs:forgot' %}">Forgot Password?</a>
+                </div>
 
-                    <p class="switch-form">Don't have an account? <a href="{% url 'blogs:register' %}" >Sign up</a></p>
-                </form>
-            </div>
+                <button type="submit" class="btn">Login</button>
 
+                <p class="switch-form">Don't have an account? <a href="{% url 'blogs:register' %}">Sign up</a></p>
+            </form>
         </div>
     </div>
+</div>
+{% endblock main %}
 
-    <!-- JavaScript -->
-    <script src="{% static 'js/auth.js' %}"></script>
-</body>
-</html>
+
+{% block jsimports %}
+
+<script src="{% static 'js/auth.js' %}"></script>
+    
+{% endblock jsimports %}
+    
