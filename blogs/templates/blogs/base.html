@@ -50,7 +50,7 @@
           <li><a href="single-post.html">Single Post</a></li>
           <li class="dropdown"><a href=""><span>Categories</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
-              {% for category in all_categories %}
+              {% for category in base_categories %}
               <li><a href="{% url 'blogs:category' category.slug %}">{{category.name}}</a></li>
               {% endfor %}
             </ul>
@@ -103,19 +103,16 @@
           <div class="col-6 col-lg-2">
             <h3 class="footer-heading">Pages</h3>
             <ul class="footer-links list-unstyled">
-              <li><a href="index.html"><i class="bi bi-chevron-right"></i> Home</a></li>
+              <li><a href="{% url 'blogs:Home'%}"><i class="bi bi-chevron-right"></i> Home</a></li>
               <li><a href="index.html"><i class="bi bi-chevron-right"></i> Blog</a></li>
-              <li><a href="category.html"><i class="bi bi-chevron-right"></i> Categories</a></li>
-              <li><a href="single-post.html"><i class="bi bi-chevron-right"></i> Single Post</a></li>
-              <li><a href="about.html"><i class="bi bi-chevron-right"></i> About us</a></li>
-              <li><a href="contact.html"><i class="bi bi-chevron-right"></i> Contact</a></li>
+              <li><a href="{% url 'blogs:contact'%}"><i class="bi bi-chevron-right"></i> Contact</a></li>
             </ul>
           </div>
           <div class="col-6 col-lg-2">
             <h3 class="footer-heading">Categories</h3>
             <ul class="footer-links list-unstyled">
-                {% for category in categories %}
-                <li><a href="category.html"><i class="bi bi-chevron-right"></i>{{category.name}}</a></li>
+                {% for category in base_categories %}
+                <li><a href="{% url 'blogs:category' category.slug %}"><i class="bi bi-chevron-right"></i>{{category.name}}</a></li>
                 {% endfor %}
 
             </ul>
@@ -125,7 +122,7 @@
             <h3 class="footer-heading">Recent Posts</h3>
 
             <ul class="footer-links footer-blog-entry list-unstyled">
-              {% for post in latest_posts%}
+              {% for post in recent_posts%}
               <li>
                 <a href="{% url 'blogs:single-post' post.slug %}" class="d-flex align-items-center">
                   <img src="{{post.image.url}}" alt="" class="img-fluid me-3">

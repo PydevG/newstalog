@@ -79,6 +79,8 @@ def singlepostview(request, slug):
     }
     return render(request, 'blogs/single-post.html', context)
 
+
+
 def tagview(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
     posts = Blog.objects.filter(tags__slug=slug).select_related('author', 'category').prefetch_related('tags')
@@ -128,6 +130,21 @@ def aboutview(request):
     return render(request, 'blogs/about.html')
 
 def contactview(request):
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            name = request.user.username
+            email = request.user.email
+            subject = request.POST.get('subject')
+            message = request.POST.get('message')
+            
+        else:
+            name = request.POST.get('name')
+            email = request.POST.get('email')
+            subject = request.POST.get('subject')
+            message = request.POST.get('message')
+        contact = ContactMessage.objects.create(name=name, email=email, subject=subject, message=message)
+        messages.success(request, "Thankyou for contacting. We will get back shortly")
+        return redirect('blogs:contact')
     return render(request, 'blogs/contact.html')
 
 # def dashboard(request):
