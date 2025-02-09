@@ -1,0 +1,69 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    
+    <!-- Google Font - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <!-- Login Form -->
+            <div class="form login active">
+                <h2>SignUp</h2>
+                <form action="" method="POST">
+                  {% csrf_token %}
+
+                  <div class="input-group">
+                        <i class="bx bx-lock"></i>
+                        <input type="text" placeholder="Full name" name="full_name" required>
+                        <i class='bx bx-hide eye-icon'></i>
+                    </div>
+
+                    <div class="input-group">
+                        <i class="bx bx-lock"></i>
+                        <input type="text" placeholder="username" name="username" required>
+                        <i class='bx bx-hide eye-icon'></i>
+                    </div>
+
+                    <div class="input-group">
+                        <i class="bx bx-envelope"></i>
+                        <input type="email" placeholder="Email" name="email" required>
+                    </div>
+
+                    <div class="input-group">
+                        <i class="bx bx-lock"></i>
+                        <input type="password" placeholder="Password" name="password" class="password" required>
+                        <i class='bx bx-hide eye-icon'></i>
+                    </div>
+
+                    <div class="input-group">
+                        <i class="bx bx-lock"></i>
+                        <input type="password" placeholder="Confirm Password" name="confirmpassword" class="password" required>
+                        <i class='bx bx-hide eye-icon'></i>
+                    </div>
+
+                    <button type="submit" class="btn">SignUp</button>
+
+                    <p class="switch-form">Already have an account? <a href="{% url 'blogs:login' %}">Login</a></p>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/auth.js' %}"></script>
+</body>
+</html>

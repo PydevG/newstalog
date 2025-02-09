@@ -98,7 +98,7 @@
     </div>
     {% endif %}
 
-  {% block main %}
+{% block main %}
 
 {% endblock main %}
 
@@ -203,6 +203,10 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'js/main.js' %}"></script>
+
+    {% block jsimports %}
+    
+  {% endblock jsimports %}
 
 </body>
 
