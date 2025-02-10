@@ -222,7 +222,7 @@ def forgot_password(request):
 			password_reset_url = reverse('blogs:reset', kwargs={'reset_id':new_password_reset.reset_id})
 			full_password_reset_url = f"{request.scheme}://{request.get_host()}{password_reset_url}"
 
-			email_body = f"Reset your password using the link below \n\n\n {full_password_reset_url}"
+			email_body = f"Hello {user.username},\n Reset your password using the link below \n\n\n {full_password_reset_url}"
 
 			email_message = EmailMessage(
 			'Reset your password', #subject

@@ -142,7 +142,7 @@ AUTH_USER_MODEL = 'blogs.CustomUser'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Use the SMTP server of your email provider
-EMAIL_PORT = 465  # Common port for SSL
+EMAIL_PORT = config('EMAIL_PORT')  # Common port for SSL
 EMAIL_USE_TLS = True  # Use TLS for secure communication
 EMAIL_USE_SSL = False  # Set to True if using SSL instead of TLS
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')  # Your email address
