@@ -1,178 +1,191 @@
-
 {% extends 'blogs/base.html' %}
 {% load static %}
 {% block title %}
 <title>Stalog</title>
 {% endblock title %}
 
+
+{% block cssimports %}
+<style>
+.comment-body {
+    font-size: 15px;
+    line-height: 1.6;
+    border-left: 4px solid #007bff;
+    padding-left: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.comment-body:hover {
+    background-color: #f8f9fa;
+}
+
+.avatar-img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.trending-item:hover {
+    background: #f1f1f1;
+    transition: 0.3s;
+}
+
+.aside-block h3 {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+</style>
+{% endblock cssimports %}
+  
+
 <body>
 {% block main %}
-  <main id="main">
-
+<main id="main">
     <section class="single-post-content">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-9 post-content" data-aos="fade-up">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-9 post-content" data-aos="fade-up">
 
-            <!-- ======= Single Post Content ======= -->
-            <div class="single-post">
-              <div class="post-meta"><span class="date">{{post.category.name}}</span> <span class="mx-1">&bullet;</span> <span>{{  post.created_at|date:"jS M Y | g:iA" }}</span></div>
-              <h1 class="mb-5">{{post.title}}</h1>
-              <figure class="my-4">
-               <center> <img src="{{post.image.url}}" alt="" class="img-fluid" style="max-width: 82%;"></center>
-              </figure>
-              <p>{{post.content}}</p>
-            </div><!-- End Single Post Content -->
+                    <!-- ======= Single Post Content ======= -->
+                    <div class="single-post">
+                        <div class="post-meta">
+                            <span class="badge bg-primary text-light">{{ post.category.name }}</span> 
+                            <span class="mx-1">&bullet;</span> 
+                            <span class="text-muted">{{ post.created_at|date:"jS M Y | g:iA" }}</span>
+                        </div>
+                        <h1 class="mb-4">{{ post.title }}</h1>
+                        <h5 class="text-muted fst-italic">📖 Dive into this post...</h5>
 
-            <!-- ======= Comments ======= -->
-            <div class="comments">
-              <h5 class="comment-title py-4">Comments</h5>
-              {% for comment in comments %}
-              <div class="comment d-flex mb-4">
-                <div class="flex-shrink-0">
-                  <div class="avatar avatar-sm rounded-circle">
-                    <img class="avatar-img" src="{{comment.author.profile.profile_picture.url}}" alt="" class="img-fluid">
-                  </div>
+                        <figure class="my-4">
+                            <center>
+                                <img src="{{ post.image.url }}" alt="" class="img-fluid rounded shadow" style="max-width: 85%;">
+                            </center>
+                        </figure>
+
+                        <p class="lead">{{ post.content }}</p>
+                    </div>
+                    <!-- End Single Post Content -->
+
+                    <!-- ======= Comments ======= -->
+                    <div class="comments">
+                        <h5 class="comment-title py-4"><i class="bi bi-chat-left-dots text-primary"></i> Comments</h5>
+                        {% for comment in comments %}
+                        <div class="comment d-flex mb-4">
+                            <div class="flex-shrink-0">
+                                <div class="avatar avatar-sm rounded-circle border border-primary p-1">
+                                    <img class="avatar-img" src="{{ comment.author.profile.profile_picture.url }}" alt="User" class="img-fluid">
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-2 ms-sm-3">
+                                <div class="comment-meta d-flex align-items-baseline">
+                                    <h6 class="me-2">{{ comment.author.username }}</h6>
+                                    <span class="text-muted small"><i class="bi bi-clock"></i> {{ comment.created_at|timesince }} ago</span>
+                                </div>
+                                <div class="comment-body bg-light p-3 rounded">
+                                    {{ comment.content }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <!-- End Comments -->
+
+                    <!-- ======= Comments Form ======= -->
+                    <div class="row justify-content-center mt-5">
+                        <div class="col-lg-12">
+                            <h5 class="comment-title"><i class="bi bi-pencil-square text-success"></i> Leave a Comment</h5>
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-person-circle"></i> Name</label>
+                                    <input type="text" class="form-control bg-light text-dark" name="name" value="{{ request.user.username }}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-envelope"></i> Email</label>
+                                    <input type="text" class="form-control bg-light text-dark" name="email" value="{{ request.user.email }}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-chat-text"></i> Comment</label>
+                                    <textarea class="form-control" id="comment-message" name="message" placeholder="Enter your Comment" cols="5" rows="5"></textarea>
+                                    <small id="word-count" class="text-muted">0/40 words</small>
+                                </div>
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-success"><i class="bi bi-send"></i> Submit Comment</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- End Comments Form -->
+
                 </div>
-                <div class="flex-grow-1 ms-2 ms-sm-3">
-                  <div class="comment-meta d-flex align-items-baseline">
-                    <h6 class="me-2">{{comment.author.username}}</h6>
-                    <span class="text-muted">{{ comment.created_at|timesince }} ago</span>
-                  </div>
-                  <div class="comment-body">
-                    {{comment.content}}
-                  </div>
-                  
+                <div class="col-md-3">
+                    <!-- ======= Sidebar ======= -->
+                    <div class="aside-block">
+                        <h3 class="text-danger"><i class="bi bi-clock-history"></i> Recent Posts</h3>
+                        {% for post in recent_posts %}
+                        <div class="post-entry-1 border-bottom">
+                            <div class="post-meta">
+                                <span class="badge bg-secondary">{{ post.category.name }}</span>
+                                <span class="mx-1">&bullet;</span>
+                                <span>{{ post.created_at|date:"jS M Y | g:iA" }}</span>
+                            </div>
+                            <h2 class="mb-2"><a href="{% url 'blogs:single-post' post.slug %}" class="text-primary">{{ post.title }}</a></h2>
+                            <span class="author small"><i class="bi bi-person-circle"></i> {{ post.author.username }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="aside-block">
+                        <h3 class="aside-title"><i class="bi bi-tags"></i> Categories</h3>
+                        <ul class="aside-links list-unstyled">
+                            {% for category in categories %}
+                            <li><a href="{% url 'blogs:category' category.slug %}"><i class="bi bi-chevron-right"></i> {{ category.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="aside-block">
+                        <h3 class="aside-title"><i class="bi bi-bookmark"></i> Tags</h3>
+                        <ul class="aside-tags list-unstyled">
+                            {% for tag in post.tags.all %}
+                            <li><a href="{% url 'blogs:tag-posts' tag.slug %}" class="btn btn-outline-secondary btn-sm">{{ tag.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
-              </div>
-              {% endfor %}
-
-              
-
-              
-            </div><!-- End Comments -->
-
-            <!-- ======= Comments Form ======= -->
-            <div class="row justify-content-center mt-5">
-
-              <div class="col-lg-12">
-                <h5 class="comment-title">Leave a Comment</h5>
-
-                <div class="row">
-                  <form action="" method="POST">
-                    {% csrf_token %}
-                  <div class="col-lg-6 mb-3">
-                    <label for="comment-name">Name</label>
-                    <input type="text" class="form-control bg-light text-dark" name="name" value="{{request.user.username}}" readonly>
-                  </div>
-                  <div class="col-lg-6 mb-3">
-                    <label for="comment-email">Email</label>
-                    <input type="text" class="form-control bg-light text-dark" name="email" value="{{request.user.email}}" readonly>
-                  </div>
-                  <div class="col-12 mb-3">
-                    <label for="comment-message">Message</label>
-
-                    <textarea class="form-control" id="comment-message" name="message" placeholder="Enter your Comment" cols="5" rows="5"></textarea>
-                    <small id="word-count" class="text-muted">0/40 words</small>
-                  </div>
-                  <div class="col-12">
-                    <input type="submit" value="Comment" class="btn btn-primary" >
-                  </div>
-                  </form>
-                </div>
-              </div>
-            </div><!-- End Comments Form -->
-
-          </div>
-          <div class="col-md-3">
-            <!-- ======= Sidebar ======= -->
-            <div class="aside-block">
-
-              <h3 class="text-danger">Recent Posts</h3>
-              <div class="tab-content" id="pills-tabContent">
-
-                <!-- Trending -->
-                <div class="">
-                 {% for post in recent_posts %}
-                  <div class="post-entry-1 border-bottom">
-                    <div class="post-meta"><span class="date">{{post.category.name}}</span> <span class="mx-1">&bullet;</span> <span>{{ post.created_at|date:"jS M Y | g:iA" }}</span></div>
-                   <span style="border-color: blue; !important"> <h2 class="mb-2" style="color: blue; !important"><a href="{% url 'blogs:single-post' post.slug %}">{{post.title}}</a></h2></span>
-                    <span class="author mb-3 d-block">{{post.author.username}}</span>
-                  </div>
-                {% endfor %}
-
-                </div> <!-- End Trending -->
-
-                
-
-                <!-- Latest -->
-                <div class="tab-pane fade" id="pills-latest" role="tabpanel" aria-labelledby="pills-latest-tab">
-                {% for post in latest_posts %}
-                  <div class="post-entry-1 border-bottom">
-                    <div class="post-meta"><span class="date">{{post.category.name }}</span> <span class="mx-1">&bullet;</span> <span>{{ post.created_at|date:"jS M Y | g:iA" }}</span></div>
-                    <h2 class="mb-2"><a href="">{{post.title }}</a></h2>
-                    <span class="author mb-3 d-block">{{post.author.username }}</span>
-                  </div>
-                {% endfor %}
-                </div> <!-- End Latest -->
-
-              </div>
             </div>
-
-            <div class="aside-block">
-              <h3 class="aside-title">Categories</h3>
-              <ul class="aside-links list-unstyled">
-                {% for category in categories %}
-                <li><a href="{% url 'blogs:category' category.slug %}"><i class="bi bi-chevron-right"></i>{{category.name}}</a></li>
-                {% endfor %}
-              </ul>
-            </div><!-- End Categories -->
-
-            <div class="aside-block">
-              <h3 class="aside-title">Tags</h3>
-              <ul class="aside-tags list-unstyled">
-                {% for tag in post.tags.all %}
-                <li><a href="{% url 'blogs:tag-posts' tag.slug%}">{{tag.name}}</a></li>
-                {% endfor %}
-              </ul>
-            </div><!-- End Tags -->
-
-          </div>
         </div>
-      </div>
     </section>
-  </main><!-- End #main -->
+</main>
+<!-- End #main -->
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     const textarea = document.getElementById("comment-message");
     const wordCountDisplay = document.getElementById("word-count");
 
     textarea.addEventListener("input", function () {
-      let words = this.value.trim().split(/\s+/).filter(word => word.length > 0);
+        let words = this.value.trim().split(/\s+/).filter(word => word.length > 0);
 
-      if (words.length > 40) {
-        // Prevent additional typing by removing extra words
-        this.value = words.slice(0, 40).join(" ");
-      }
+        if (words.length > 40) {
+            this.value = words.slice(0, 40).join(" ");
+        }
 
-      wordCountDisplay.textContent = `${words.length}/40 words`;
+        wordCountDisplay.textContent = `${words.length}/40 words`;
     });
 
     textarea.addEventListener("keydown", function (event) {
-      let words = this.value.trim().split(/\s+/).filter(word => word.length > 0);
+        let words = this.value.trim().split(/\s+/).filter(word => word.length > 0);
 
-      if (words.length >= 40 && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
-        event.preventDefault(); // Stop typing if word limit is reached
-      }
+        if (words.length >= 40 && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
+            event.preventDefault();
+        }
     });
-  });
+});
 </script>
 
-
 {% endblock main%}
-
-
 </body>
-
 </html>

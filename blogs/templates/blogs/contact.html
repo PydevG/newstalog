@@ -1,108 +1,158 @@
-
 {% extends 'blogs/index.html' %}
 {% load static %}
+
 {% block title %}
-<title>Stalog|Contact</title>
+<title>Stalog | Contact</title>
 {% endblock title %}
 
-<body>
+{% block cssimports %}
+<style>
+  /* General Styling */
+  .contact-section {
+      background-color: #f8f9fa;
+      padding: 60px 0;
+  }
+
+  .contact-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color:rgb(2, 71, 199); /* Bootstrap Danger Color */
+  }
+
+  /* Contact Info Box */
+  .contact-info-box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.3s ease-in-out;
+  }
+
+  .contact-info-box:hover {
+      transform: scale(1.05);
+  }
+
+  .contact-info-box i {
+      font-size: 40px;
+      color:rgb(0, 33, 182);
+      margin-bottom: 15px;
+  }
+
+  .contact-info-box h3 {
+      font-size: 1.2rem;
+      margin-bottom: 5px;
+  }
+
+  /* Contact Form */
+  .contact-form {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .contact-form input, 
+  .contact-form textarea {
+      border-radius: 5px;
+      border: 1px solid #ced4da;
+      padding: 12px;
+  }
+
+  .contact-form button {
+      background: #dc3545;
+      color: #fff;
+      padding: 12px;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: background 0.3s ease-in-out;
+  }
+
+  .contact-form button:hover {
+      background: #a71d2a;
+  }
+
+</style>
+{% endblock cssimports %}
+
 {% block main %}
-  <main id="main">
-    <section id="contact" class="contact mb-5">
-      <div class="container" data-aos="fade-up">
+<main id="main">
+    <section class="contact-section">
+        <div class="container" data-aos="fade-up">
 
-        <div class="row">
-          <div class="col-lg-12 text-center mb-5">
-            <h1 class="page-title">Contact us</h1>
-          </div>
+            <!-- Page Title -->
+            <div class="text-center mb-5">
+                <h1 class="contact-title">Get in Touch</h1>
+                <p class="text-muted">We’d love to hear from you! Reach out using the form below.</p>
+            </div>
+
+            <div class="row gy-4">
+                <!-- Contact Information -->
+                <div class="col-md-4">
+                    <div class="contact-info-box">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <h3>Our Location</h3>
+                        <p>Egerton-Njoro, Kenya</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="contact-info-box">
+                        <i class="bi bi-telephone-fill"></i>
+                        <h3>Call Us</h3>
+                        <p><a href="tel:+254745521825" class="text-dark">+254 745 521 825</a></p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="contact-info-box">
+                        <i class="bi bi-envelope-fill"></i>
+                        <h3>Email</h3>
+                        <p><a href="mailto:unclepedits.com@gmail.com" class="text-dark">unclepedits.com@gmail.com</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="row justify-content-center mt-5">
+                <div class="col-lg-8">
+                    <div class="contact-form">
+                        <form action="" method="post" class="php-email-form">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <input type="text" name="name" class="form-control" 
+                                           id="name" 
+                                           {% if request.user.is_authenticated %}
+                                           value="{{ request.user.username }}" readonly
+                                           {% else %}
+                                           placeholder="Your Name" required
+                                           {% endif %}>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <input type="email" class="form-control" name="email" id="email" 
+                                           {% if request.user.is_authenticated %}
+                                           value="{{ request.user.email }}" readonly
+                                           {% else %}
+                                           placeholder="Your Email" required
+                                           {% endif %}>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required>
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit"><i class="bi bi-send-fill"></i> Send Message</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
-
-        <div class="row gy-4">
-
-          <div class="col-md-4">
-            <div class="info-item">
-              <i class="bi bi-geo-alt"></i>
-              <h3>Address</h3>
-              <address>Egerton-Njoro, Kenya</address>
-            </div>
-          </div><!-- End Info Item -->
-
-          <div class="col-md-4">
-            <div class="info-item info-item-borders">
-              <i class="bi bi-phone"></i>
-              <h3>Phone Number</h3>
-              <p><a href="tel:+254745521825">+254745521825</a></p>
-            </div>
-          </div><!-- End Info Item -->
-
-          <div class="col-md-4">
-            <div class="info-item">
-              <i class="bi bi-envelope"></i>
-              <h3>Email</h3>
-              <p><a href="mailto:unclepedits.com@gmail.com">unclepedits.com@gmail.com</a></p>
-            </div>
-          </div><!-- End Info Item -->
-
-        </div>
-      {% if request.user.is_authenticated %}
-        <div class="form mt-5">
-          <form action="" method="post" class="php-email-form">
-            {% csrf_token %}
-            <div class="row">
-              <div class="form-group col-md-6">
-                <input type="text" name="name" class="form-control" id="name" value={{request.user.username}} readonly required>
-              </div>
-              <div class="form-group col-md-6">
-                <input type="email" class="form-control" name="email" id="email" value={{request.user.email}} readonly required>
-              </div>
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required>
-            </div>
-            <div class="form-group">
-              <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
-            </div>
-            <div class="my-3">
-              
-            </div>
-            <div class="text-center"><button type="submit">Send Message</button></div>
-          </form>
-        </div><!-- End Contact Form -->
-      {% else %}
-          <div class="form mt-5">
-          <form action="" method="post" class="php-email-form">
-            {% csrf_token %}
-            <div class="row">
-              <div class="form-group col-md-6">
-                <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required>
-              </div>
-              <div class="form-group col-md-6">
-                <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required>
-            </div>
-            <div class="form-group">
-              <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
-            </div>
-            <div class="my-3">
-              <div class="loading">Loading</div>
-              <div class="error-message"></div>
-              <div class="sent-message">Your message has been sent. Thank you!</div>
-            </div>
-            <div class="text-center"><button type="submit">Send Message</button></div>
-          </form>
-        </div><!-- End Contact Form -->
-      {% endif %}
-
-      </div>
     </section>
-
-  </main><!-- End #main -->
+</main>
 {% endblock main %}
-</body>
-
-
-
-</html>
