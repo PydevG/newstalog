@@ -35,33 +35,18 @@
             min-height: 100vh;
             padding: 100px 20px 20px; /* Added top padding to push content below navbar */
         }
+        .messages-container {
+            margin-bottom: 20px;
+        }
 
-
-        /* Google Button */
-        .google-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            background: #db4437;
-            color: white;
-            border: none;
+        .alert {
             padding: 10px 15px;
-            font-size: 16px;
-            font-weight: bold;
             border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
+            font-size: 14px;
+            text-align: center;
         }
 
-        .google-btn:hover {
-            background: #c1351d;
-        }
 
-        .google-btn i {
-            font-size: 20px;
-        }
     </style>
 {% endblock cssimports %}
     
@@ -71,6 +56,17 @@
     <div class="form-container">
         <h2 class="text-center mb-4">Sign Up</h2>
         <form action="" method="POST">
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
             {% csrf_token %}
 
             <div class="input-group">

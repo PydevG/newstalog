@@ -19,6 +19,9 @@ import requests
 from .models import EmailVerification
 import uuid
 from django.core.mail import send_mail
+from .utils import send_verification_email
+from django.utils.crypto import get_random_string
+from django.contrib.sites.shortcuts import get_current_site
 
 
 User = get_user_model()
@@ -168,50 +171,47 @@ def contactview(request):
 #     return render(request, 'blogs/dashboard.html')
 
 def registerview(request):
-    if request.method == 'POST':
-        full_name = request.POST.get('name')
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        confirmpassword = request.POST.get('confirmpassword')
+    if request.method == "POST":
+        full_name = request.POST["full_name"]
+        username = request.POST["username"]
+        email = request.POST["email"]
+        password = request.POST["password"]
+        confirm_password = request.POST["confirmpassword"]
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return redirect("blogs:register")
 
         if User.objects.filter(email=email).exists():
-            messages.error(request, "Email already exists")
-            return redirect('blogs:register')
-        
-        if len(password) < 5:
-            messages.error(request, "Password must be at least 5 characters")
-            return redirect('blogs:register')
+            messages.error(request, "Email already in use.")
+            return redirect("blogs:register")
 
-        if password != confirmpassword:
-            messages.error(request, "Passwords do not match")
-            return redirect('blogs:register')
+        # Create User
+        user = User.objects.create_user(username=username, email=email, password=password)
+        user.first_name = full_name
+        user.is_active = False  # User must verify email before login
+        user.save()
 
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password,
-            is_active=False  # Set user as inactive until verification
-        )
+        # Generate a unique verification token
+        verification_token = get_random_string(50)
 
-        # Generate verification token
-        token = str(uuid.uuid4())
 
-        verification_link = f"{request.scheme}://{request.get_host()}/verify/{token}/"
-        email_body = f"Hello {user.username},\n\nClick the link below to verify your email:\n{verification_link}\n\nThank you!"
+        # Generate email verification link
+        current_site = get_current_site(request)
+        verification_link = f"http://{current_site.domain}{reverse('blogs:verify_email', args=[verification_token])}"
 
-        send_mail(
-            "Verify Your Email",
-            email_body,
-            settings.DEFAULT_FROM_EMAIL,
-            [email],
-            fail_silently=False,
-        )
+        # Send email verification
+        email_sent = send_verification_email(email, verification_link)
 
-        messages.success(request, "Account created! Check your email to verify.")
-        return redirect('blogs:login')
+        if email_sent:
+            messages.success(request, "Account created! Check your email to verify your account.")
+        else:
+            messages.error(request, "Failed to send verification email. Try again.")
 
-    return render(request, 'blogs/signup.html')
+        return redirect("blogs:login")
+
+    return render(request, "blogs/signup.html")
+
 
 
 def userlogin(request):
@@ -338,11 +338,15 @@ def categoriesview2(request):
 
 
 def verify_email(request, token):
-    profile = get_object_or_404(Profile, verification_token=token)
-    profile.is_verified = True
-    profile.user.is_active = True  # Activate the user
-    profile.verification_token = None  # Remove the token
-    profile.save()
-    messages.success(request, "Email verified! You can now log in.")
-    return redirect('blogs:login')
+    try:
+        profile = Profile.objects.get(verification_token=token)
+        user = profile.user
+        user.is_active = True  # Activate user
+        user.save()
+        profile.verification_token = ""  # Clear token after verification
+        profile.save()
+        messages.success(request, "Email verified successfully! You can now log in.")
+    except Profile.DoesNotExist:
+        messages.error(request, "Invalid verification link.")
 
+    return redirect("blogs:login")
