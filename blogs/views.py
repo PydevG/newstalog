@@ -175,63 +175,45 @@ def registerview(request):
         password = request.POST.get('password')
         confirmpassword = request.POST.get('confirmpassword')
 
-        user_data_has_error = False
-
         if User.objects.filter(email=email).exists():
-            user_data_has_error = True
             messages.error(request, "Email already exists")
-        elif len(password) < 5:
-            user_data_has_error = True
-            messages.error(request, "Password must be at least 5 characters")
-        elif password != confirmpassword:
-            user_data_has_error = True
-            messages.error(request, "Passwords do not match")
+            return redirect('blogs:register')
         
-        if user_data_has_error:
+        if len(password) < 5:
+            messages.error(request, "Password must be at least 5 characters")
             return redirect('blogs:register')
 
-        # Create an inactive user
-        new_user = User.objects.create_user(
+        if password != confirmpassword:
+            messages.error(request, "Passwords do not match")
+            return redirect('blogs:register')
+
+        user = User.objects.create_user(
             username=username,
             email=email,
             password=password,
-            is_active=False  
+            is_active=False  # Set user as inactive until verification
         )
 
-        # Generate a verification token
-        verification_token = str(uuid.uuid4())
-        EmailVerification.objects.create(user=new_user, token=verification_token)
+        # Generate verification token
+        token = str(uuid.uuid4())
 
-        # Send email verification link
-        verification_url = request.build_absolute_uri(
-            reverse('blogs:verify-email', kwargs={'token': verification_token})
-        )
-        email_subject = "Verify Your Email Address"
-        email_body = f"""
-        Hi {username},
-
-        Thank you for signing up! Please verify your email by clicking the link below:
-
-        {verification_url}
-
-        If you did not sign up, you can ignore this email.
-
-        Best,
-        Your Website Team
-        """
+        verification_link = f"{request.scheme}://{request.get_host()}/verify/{token}/"
+        email_body = f"Hello {user.username},\n\nClick the link below to verify your email:\n{verification_link}\n\nThank you!"
 
         send_mail(
-            subject=email_subject,
-            message=email_body,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
+            "Verify Your Email",
+            email_body,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
             fail_silently=False,
         )
 
-        messages.success(request, "Account created successfully! Please check your email to verify your account.")
+        messages.success(request, "Account created! Check your email to verify.")
         return redirect('blogs:login')
 
     return render(request, 'blogs/signup.html')
+
+
 def userlogin(request):
 	if request.method == 'POST':
 		email = request.POST.get('email')
@@ -356,16 +338,11 @@ def categoriesview2(request):
 
 
 def verify_email(request, token):
-    try:
-        verification = EmailVerification.objects.get(token=token)
-        user = verification.user
-        user.is_active = True
-        user.save()
-        verification.delete()  # Remove the token after verification
+    profile = get_object_or_404(Profile, verification_token=token)
+    profile.is_verified = True
+    profile.user.is_active = True  # Activate the user
+    profile.verification_token = None  # Remove the token
+    profile.save()
+    messages.success(request, "Email verified! You can now log in.")
+    return redirect('blogs:login')
 
-        messages.success(request, "Your email has been verified! You can now log in.")
-        return redirect('blogs:login')
-
-    except EmailVerification.DoesNotExist:
-        messages.error(request, "Invalid or expired verification link.")
-        return redirect('blogs:register')

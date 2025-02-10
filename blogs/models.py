@@ -108,6 +108,8 @@ class Profile(models.Model):
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
     website = models.URLField(blank=True, null=True)
+    verification_token = models.CharField(max_length=100, blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.user.username} Profile'

@@ -142,6 +142,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'blogs.CustomUser'
 
 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = 'smtp.gmail.com'  # Use the SMTP server of your email provider
 EMAIL_PORT = config('EMAIL_PORT')  # Common port for SSL
 EMAIL_USE_TLS = True  # Use TLS for secure communication
@@ -157,13 +158,7 @@ INSTALLED_APPS += [
     'allauth.socialaccount.providers.google',
 ]
 
-ANYMAIL = {
-    "MAILGUN_API_KEY": config('MAILGUN_API_KEY'),
-    "MAILGUN_SENDER_DOMAIN": config('MAILGUN_DOMAIN'),
-}
-
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-DEFAULT_FROM_EMAIL = f"no-reply@{config('MAILGUN_DOMAIN')}"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 AUTHENTICATION_BACKENDS = [
@@ -172,26 +167,4 @@ AUTHENTICATION_BACKENDS = [
     'blogs.backends.EmailAuthBackend', 
     
 ]
-
-SITE_ID = 1  # Make sure it's correct in the Django Admin panel
-
-LOGIN_REDIRECT_URL = '/' 
-LOGOUT_REDIRECT_URL = '/'
-
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
-    }
-}
-
-SOCIALACCOUNT_PROVIDERS['google']['APP'] = {
-    'client_id': config('CLIENT_ID'),
-    'secret': config('SECRET'),
-}
 

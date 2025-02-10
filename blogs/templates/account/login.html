@@ -1,5 +1,6 @@
 {% extends 'blogs/authbase.html' %}
 {% load static %}
+{% load socialaccount %}
 
 {% block main %}
 <div class="container d-flex justify-content-center align-items-center vh-100">
@@ -33,10 +34,7 @@
 
             <hr>
 
-            <!-- Google Login -->
-            <a href="{% provider_login_url 'google' %}" class="btn btn-danger d-block text-center">
-                <i class="bx bxl-google"></i> Sign in with Google
-            </a>
+            
         </form>
     </div>
 </div>

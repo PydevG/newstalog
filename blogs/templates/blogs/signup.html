@@ -33,7 +33,6 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea, #764ba2); /* Gradient background */
             padding: 100px 20px 20px; /* Added top padding to push content below navbar */
         }
 
@@ -107,10 +106,7 @@
                 Already have an account? <a href="{% url 'blogs:login' %}">Login</a>
             </p>
 
-            <!-- Google Sign-In Button -->
-            <a href="{% provider_login_url 'google' %}" class="google-btn mt-2">
-                <i class="bx bxl-google"></i> Sign in with Google
-            </a>
+        
         </form>
     </div>
 </div>
