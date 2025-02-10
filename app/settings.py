@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'blogs',
     'rest_framework', 
     'channels',  # optional for real-time functionality
+    'jwt',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +49,7 @@ MIDDLEWARE = [
     
     # Other middlewares...
     'blogs.tracking_middleware.PageVisitMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -140,17 +142,56 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'blogs.CustomUser'
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Use the SMTP server of your email provider
 EMAIL_PORT = config('EMAIL_PORT')  # Common port for SSL
 EMAIL_USE_TLS = True  # Use TLS for secure communication
 EMAIL_USE_SSL = False  # Set to True if using SSL instead of TLS
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')  # Your email address
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # Your email password
-DEFAULT_FROM_EMAIL = f'Stalog <{EMAIL_HOST_USER}>'
+
+INSTALLED_APPS += [
+    'anymail',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+]
+
+ANYMAIL = {
+    "MAILGUN_API_KEY": config('MAILGUN_API_KEY'),
+    "MAILGUN_SENDER_DOMAIN": config('MAILGUN_DOMAIN'),
+}
+
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+DEFAULT_FROM_EMAIL = f"no-reply@{config('MAILGUN_DOMAIN')}"
 
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',  # Default backend
-    'blogs.backends.EmailAuthBackend',  # Custom email authentication backend
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+    'blogs.backends.EmailAuthBackend', 
+    
 ]
+
+SITE_ID = 1  # Make sure it's correct in the Django Admin panel
+
+LOGIN_REDIRECT_URL = '/' 
+LOGOUT_REDIRECT_URL = '/'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+    }
+}
+
+SOCIALACCOUNT_PROVIDERS['google']['APP'] = {
+    'client_id': config('CLIENT_ID'),
+    'secret': config('SECRET'),
+}
+

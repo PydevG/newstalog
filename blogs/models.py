@@ -170,3 +170,11 @@ class PageVisit(models.Model):
 
     class Meta:
         ordering = ['-start_time']
+
+
+class EmailVerification(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    token = models.UUIDField(unique=True)
+
+    def __str__(self):
+        return f"Verification for {self.user.email}"

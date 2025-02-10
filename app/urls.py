@@ -7,5 +7,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('blogs/', include('blogs.urls')),
     path('django_plotly_dash/', include('django_plotly_dash.urls', namespace='the_django_plotly_dash')),
+    path('accounts/', include('allauth.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

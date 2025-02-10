@@ -43,7 +43,7 @@
   .img-bg-inner {
       position: absolute;
       bottom: 20px;
-      left: 20px;
+      left: 10px;
       color: white;
       transition: transform 0.5s ease-in-out;
   }
@@ -132,13 +132,13 @@
 
   /* Pagination Styling */
   .pagination .page-item .page-link {
-      color: #dc3545;
-      border: 1px solid #dc3545;
+      color:rgb(31, 97, 0);
+      border: 1px solidrgb(100, 220, 53);
       transition: all 0.3s ease-in-out;
   }
 
   .pagination .page-item .page-link:hover {
-      background: #dc3545;
+      background:1px rgb(31, 97, 0);
       color: white;
   }
 
@@ -184,7 +184,7 @@
 
                 <!-- HEADLINES (LEFT) -->
                 <div class="col-lg-4">
-                    <h2 class="text-danger">HEADLINES</h2>
+                    <h2 class="text-primary">HEADLINES</h2>
                     {% for post in headline_posts %}
                     <div class="post-entry-1 lg">
                         <a href="{% url 'blogs:single-post' post.slug %}"><img src="{{ post.image.url }}" alt="" class="img-fluid"></a>
@@ -214,7 +214,7 @@
 
                 <!-- POSTS (MIDDLE) -->
                 <div class="col-lg-5">
-                    <center><h2 class="text-danger ">Latest Blogs</h2></center>
+                    <center><h2 class="text-primary ">Latest Blogs</h2></center>
                     <div class="row g-5">
                         {% for post in page_obj %}
                         <div class="col-md-6">

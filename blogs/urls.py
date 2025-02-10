@@ -19,6 +19,7 @@ urlpatterns = [
     path('reset/', views.reset_password, name='reset'),
     path('link-sent/', views.password_reset_sent, name='reset-sent'),
     path('logout/', views.logout_view, name='logout'),
+    path('verify-email/<uuid:token>/', views.verify_email, name='verify-email'),
 
 
 

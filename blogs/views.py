@@ -15,6 +15,13 @@ from django.core.mail import EmailMessage
 from django.utils import timezone
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+import requests
+from .models import EmailVerification
+import uuid
+from django.core.mail import send_mail
+
+
+User = get_user_model()
 
 def analytics_dashboard(request):
     """Display analytics of page visits"""
@@ -169,31 +176,62 @@ def registerview(request):
         confirmpassword = request.POST.get('confirmpassword')
 
         user_data_has_error = False
-        User = get_user_model()
 
         if User.objects.filter(email=email).exists():
             user_data_has_error = True
-            messages.error(request, "email already exists")
-        elif len(password)<5:
+            messages.error(request, "Email already exists")
+        elif len(password) < 5:
             user_data_has_error = True
             messages.error(request, "Password must be at least 5 characters")
         elif password != confirmpassword:
             user_data_has_error = True
             messages.error(request, "Passwords do not match")
-        elif user_data_has_error:
+        
+        if user_data_has_error:
             return redirect('blogs:register')
-        else:
-            new_user = User.objects.create_user(
-            first_name = full_name,
-            username = username,
-            email = email,
-            password = password
-            )
-            messages.success(request, "Account created successfully")
-            return redirect('blogs:login')
+
+        # Create an inactive user
+        new_user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            is_active=False  
+        )
+
+        # Generate a verification token
+        verification_token = str(uuid.uuid4())
+        EmailVerification.objects.create(user=new_user, token=verification_token)
+
+        # Send email verification link
+        verification_url = request.build_absolute_uri(
+            reverse('blogs:verify-email', kwargs={'token': verification_token})
+        )
+        email_subject = "Verify Your Email Address"
+        email_body = f"""
+        Hi {username},
+
+        Thank you for signing up! Please verify your email by clicking the link below:
+
+        {verification_url}
+
+        If you did not sign up, you can ignore this email.
+
+        Best,
+        Your Website Team
+        """
+
+        send_mail(
+            subject=email_subject,
+            message=email_body,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=False,
+        )
+
+        messages.success(request, "Account created successfully! Please check your email to verify your account.")
+        return redirect('blogs:login')
 
     return render(request, 'blogs/signup.html')
-
 def userlogin(request):
 	if request.method == 'POST':
 		email = request.POST.get('email')
@@ -213,36 +251,44 @@ def userlogin(request):
 	return render(request, 'blogs/login.html')
 
 def forgot_password(request):
-	if request.method == 'POST':
-		email = request.POST.get('email')
+    if request.method == 'POST':
+        email = request.POST.get('email')
 
-		try:
-			user = User.objects.get(email=email)
-			new_password_reset = PasswordReset(user=user)
-			new_password_reset.save()
+        try:
+            user = User.objects.get(email=email)
+            new_password_reset = PasswordReset.objects.create(user=user)
 
-			password_reset_url = reverse('blogs:reset', kwargs={'reset_id':new_password_reset.reset_id})
-			full_password_reset_url = f"{request.scheme}://{request.get_host()}{password_reset_url}"
+            password_reset_url = reverse('blogs:reset', kwargs={'reset_id': new_password_reset.reset_id})
+            full_password_reset_url = f"{request.scheme}://{request.get_host()}{password_reset_url}"
 
-			email_body = f"Hello {user.username},\n Reset your password using the link below \n\n\n {full_password_reset_url}"
+            email_subject = "Reset Your Password"
+            email_body = f"""Hello {user.username},
 
-			email_message = EmailMessage(
-			'Reset your password', #subject
-			email_body,
-			settings.EMAIL_HOST_USER, #SENDER
-			[email]
-			)
-			email_message.fail_silently = True
-			email_message.send()
+        You requested a password reset. Click the link below to reset your password:
 
-			return redirect('blogs:reset-sent', reset_id=new_password_reset.reset_id)
+            {full_password_reset_url}
 
-		except user.DoesNotExist:
-			messages.error(request, f"No user with the email '{email}' found! ")
-			return redirect('blogs:forgot')
+            If you did not request this, ignore this email.
 
+            Best,
+            Your Website Team
+            """
 
-	return render(request, 'blogs/forgot-password.html')
+            send_mail(
+                subject=email_subject,
+                message=email_body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=False,  # Set to False for debugging
+            )
+
+            return redirect('blogs:reset-sent', reset_id=new_password_reset.reset_id)
+
+        except User.DoesNotExist:
+            messages.error(request, f"No user with the email '{email}' found!")
+            return redirect('blogs:forgot')
+
+    return render(request, 'blogs/forgot-password.html')
 
 def password_reset_sent(request, reset_id):
 	if PasswordReset.objects.filter(reset_id=reset_id).exists():
@@ -307,3 +353,19 @@ def categoriesview2(request):
     }
     
     return render(request, 'blogs/cats.html', context)
+
+
+def verify_email(request, token):
+    try:
+        verification = EmailVerification.objects.get(token=token)
+        user = verification.user
+        user.is_active = True
+        user.save()
+        verification.delete()  # Remove the token after verification
+
+        messages.success(request, "Your email has been verified! You can now log in.")
+        return redirect('blogs:login')
+
+    except EmailVerification.DoesNotExist:
+        messages.error(request, "Invalid or expired verification link.")
+        return redirect('blogs:register')

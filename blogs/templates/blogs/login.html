@@ -1,4 +1,6 @@
 {% extends 'blogs/authbase.html' %}
+{% load socialaccount %}
+
 {% load static %}
 
 
@@ -17,7 +19,7 @@
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="form-container">
         <!-- Login Form -->
-        <div class="form login active">
+        <div class="form login active mt-3">
             <h2>Login</h2>
             <form action="" method="POST">
                 {% csrf_token %}
@@ -40,6 +42,10 @@
 
                 <p class="switch-form">Don't have an account? <a href="{% url 'blogs:register' %}">Sign up</a></p>
             </form>
+        <a href="{% provider_login_url 'google' %}" class="btn btn-danger">
+            <i class="bi bi-google"></i> Sign in with Google
+        </a>
+
         </div>
     </div>
 </div>

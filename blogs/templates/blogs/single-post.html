@@ -8,13 +8,21 @@
 {% block cssimports %}
 <style>
 .comment-body {
-    font-size: 15px;
+    font-size: 13px;
     line-height: 1.6;
     border-left: 4px solid #007bff;
     padding-left: 10px;
     transition: all 0.3s ease-in-out;
 }
 
+.post-body {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.6;
+    border-left: 4px solid rgb(7, 87, 0);
+    padding-left: 10px;
+    transition: all 0.3s ease-in-out;
+}
 .comment-body:hover {
     background-color: #f8f9fa;
 }
@@ -64,7 +72,7 @@
                             </center>
                         </figure>
 
-                        <p class="lead">{{ post.content }}</p>
+                        <p class="lead post-body">{{ post.content }}</p>
                     </div>
                     <!-- End Single Post Content -->
 
