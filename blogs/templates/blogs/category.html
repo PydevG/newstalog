@@ -108,7 +108,7 @@
             <div class="aside-block">
               <h3 class="aside-title">Categories</h3>
               <ul class="aside-links list-unstyled">
-                {% for category in categories %}
+                {% for category in all_categories %}
                 <li><a href="{% url 'blogs:category' category.slug %}"><i class="bi bi-chevron-right"></i>{{category.name}}</a></li>
                 {% endfor %}
               </ul>
