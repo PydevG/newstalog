@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.utils.timezone import now
+import uuid
 
 # User = get_user_model()
 
@@ -180,3 +181,12 @@ class EmailVerification(models.Model):
 
     def __str__(self):
         return f"Verification for {self.user.email}"
+    
+    
+class PasswordReset(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    reset_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"password reset for {self.user.username} at {self.created}"

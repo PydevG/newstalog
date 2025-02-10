@@ -58,6 +58,7 @@
           <li><a href="{% url 'blogs:Home'%}">Blog</a></li>
           <li><a href="{% url 'blogs:categories'%}">Categories</a></li>
           {% if request.user.is_authenticated %}
+          <li><a href="{% url 'blogs:my-posts'%}">My Posts</a></li>
           <li><a href="{% url 'blogs:logout'%}">logout</a></li>
           {% else %}
           <li><a href="{% url 'blogs:register'%}">SignUp</a></li>

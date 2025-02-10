@@ -1,0 +1,40 @@
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table th {
+    text-align: center;
+}
+
+.table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.btn {
+    margin: 2px;
+}
+
+.btn i {
+    font-size: 18px;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    border: none;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border: none;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+
+.btn:hover {
+    opacity: 0.85;
+}

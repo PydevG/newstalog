@@ -1,5 +1,5 @@
 from django import forms
-from .models import ContactMessage
+from .models import ContactMessage, Blog
 
 class ContactMessageReplyForm(forms.ModelForm):
     reply = forms.CharField(
@@ -16,3 +16,9 @@ class ContactMessageReplyForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'readonly': 'readonly'}),
             'message': forms.Textarea(attrs={'readonly': 'readonly'}),
         }
+
+
+class BlogForm(forms.ModelForm):
+    class Meta:
+        model = Blog
+        fields = ['title', 'content', 'category', 'tags', 'image', 'is_published']

@@ -16,10 +16,14 @@ urlpatterns = [
     path('tag/<slug:slug>/', views.tagview, name='tag-posts'),
     path('login/', views.userlogin, name='login'),
     path('forgot/', views.forgot_password, name='forgot'),
-    path('reset/', views.reset_password, name='reset'),
-    path('link-sent/', views.password_reset_sent, name='reset-sent'),
+    path('reset/<uuid:reset_id>/', views.reset_password, name='reset'),
+    path('link-sent/<uuid:reset_id>/', views.password_reset_sent, name='reset-sent'),
     path('logout/', views.logout_view, name='logout'),
     path("verify-email/<str:token>/", views.verify_email, name="verify_email"),
+    path('my-posts/', views.user_posts, name='my-posts'),
+    path('delete/<int:post_id>/', views.delete_post, name='delete-post'),
+    path('create-post/', views.create_post, name='create-post'),
+    path('edit/<slug:slug>/', views.edit_post, name='edit_post'),
 
 
 

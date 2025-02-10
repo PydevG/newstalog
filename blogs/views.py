@@ -22,6 +22,9 @@ from django.core.mail import send_mail
 from .utils import send_verification_email
 from django.utils.crypto import get_random_string
 from django.contrib.sites.shortcuts import get_current_site
+from .forms import BlogForm 
+from django.utils.text import slugify
+
 
 
 User = get_user_model()
@@ -274,7 +277,7 @@ def forgot_password(request):
 
 def password_reset_sent(request, reset_id):
 	if PasswordReset.objects.filter(reset_id=reset_id).exists():
-		return render(request, 'blogs/password-resent-sent.html')
+		return render(request, 'blogs/password-reset-sent.html')
 	else:
 		messages.error(request, "Invalid reset ID")
 		return redirect('blogs:forgot')
@@ -285,8 +288,8 @@ def reset_password(request, reset_id):
         password_reset = PasswordReset.objects.get(reset_id=reset_id)
 
         if request.method == 'POST':
-            newPassword = request.POST.get('newPassword')
-            confirmPassword = request.POST.get('confirmPassword')
+            newPassword = request.POST.get('newpassword')
+            confirmPassword = request.POST.get('confirmpassword')
 
             passwords_have_error = False
 
@@ -350,3 +353,85 @@ def verify_email(request, token):
         messages.error(request, "Invalid verification link.")
 
     return redirect("blogs:login")
+
+@login_required(login_url='blogs:login')
+def user_posts(request):
+    posts = Blog.objects.filter(author=request.user)
+    return render(request, 'blogs/user_posts.html', {'posts': posts})
+
+@login_required(login_url='blogs:login')
+def delete_post(request, blog_id):
+    if request.method == 'DELETE':
+        post = get_object_or_404(Blog, id=blog_id, author=request.user)
+        post.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False}, status=400)
+
+@login_required(login_url='blogs:login')
+def create_post(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        content = request.POST.get("content")
+        category_id = request.POST.get("category")
+        tags_ids = request.POST.getlist("tags")
+        image = request.FILES.get("image")
+
+        category = Category.objects.get(id=category_id) if category_id else None
+        post = Blog.objects.create(
+            title=title,
+            author=request.user,
+            content=content,
+            category=category,
+            is_published=is_published,
+            image=image
+        )
+
+        # Add selected tags
+        if tags_ids:
+            post.tags.set(Tag.objects.filter(id__in=tags_ids))
+
+        return redirect("my-posts")
+
+    categories = Category.objects.all()
+    tags = Tag.objects.all()
+    return render(request, "blogs/create_post.html", {"categories": categories, "tags": tags})
+
+
+@login_required
+def edit_post(request, slug):
+    blog = get_object_or_404(Blog, slug=slug)  # Get the blog post or return 404
+
+    if request.user != blog.author:  # Prevents unauthorized editing
+        return redirect('blog_list')
+
+    if request.method == "POST":
+        form = BlogForm(request.POST, request.FILES, instance=blog)
+        if form.is_valid():
+            blog = form.save(commit=False)
+            
+            # Update slug if title changes
+            if blog.title != form.cleaned_data['title']:
+                base_slug = slugify(form.cleaned_data['title'])
+                slug = base_slug
+                count = 1
+                while Blog.objects.filter(slug=slug).exclude(id=blog.id).exists():
+                    slug = f"{base_slug}-{count}"
+                    count += 1
+                blog.slug = slug
+
+            blog.save()
+            form.save_m2m()  # Save many-to-many fields (tags)
+            return redirect('blog_detail', slug=blog.slug)  # Redirect to updated post
+
+    else:
+        form = BlogForm(instance=blog)  # Pre-fill form with existing data
+
+    categories = Category.objects.all()
+    tags = Tag.objects.all()
+
+    return render(request, 'blogs/edit_post.html', {
+        'form': form,
+        'blog': blog,
+        'categories': categories,
+        'tags': tags
+    })

@@ -1,0 +1,83 @@
+{% extends 'blogs/base.html' %}
+{% load static %}
+
+{% block title %}Create New Post{% endblock %}
+
+{% block cssimports %}
+<link rel="stylesheet" href="{% static 'css/create_post.css' %}">
+{% endblock %}
+
+{% block main %}
+<div class="container mt-5">
+    <h2 class="text-center">Create a New Blog Post</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="mt-4">
+        {% csrf_token %}
+
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="content" class="form-label">Content</label>
+                    <textarea class="form-control" id="content" name="content" rows="6" required></textarea>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">-- Select Category --</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="tags" class="form-label">Tags</label>
+                    <select class="form-select" id="tags" name="tags" multiple>
+                        {% for tag in tags %}
+                        <option value="{{ tag.id }}">{{ tag.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="image" class="form-label">Upload Image</label>
+                    <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                    <img id="previewImage" src="" class="img-thumbnail mt-2" style="display: none; max-height: 150px;">
+                </div>
+
+
+                <button type="submit" class="btn btn-primary w-100">Create Post</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block jsimports %}
+<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+<script>
+    // Initialize rich text editor
+    CKEDITOR.replace('content');
+
+    // Image preview
+    document.getElementById('image').addEventListener('change', function (event) {
+        let reader = new FileReader();
+        reader.onload = function () {
+            let img = document.getElementById('previewImage');
+            img.src = reader.result;
+            img.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    });
+</script>
+{% endblock %}
