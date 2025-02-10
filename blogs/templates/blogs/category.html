@@ -12,9 +12,11 @@
       <div class="container">
         <div class="row">
           <div class="col-md-9" data-aos="fade-up">
-            <h3 class="category-title">Category: {{category.name}}</h3>
+            
+              <h3 class="category-title">{{slug}} blogs</h3>
+            
           {% for post in page_obj %}
-            <div class="d-md-flex post-entry-2 half">
+          <div class="d-md-flex post-entry-2 half">
               <a href="{% url 'blogs:single-post' post.slug %}" class="me-4 thumbnail mainpost">
                 <img src="{{post.image.url}}" alt="" class="img-fluid">
               </a>

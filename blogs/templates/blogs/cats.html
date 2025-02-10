@@ -1,0 +1,90 @@
+{% extends 'blogs/index.html' %}
+{% load static %}
+{% block title %}
+<title>Stalog | Categories</title>
+{% endblock title %}
+
+
+{% block cssimports %}
+
+<style>
+    .category-card {
+        background-color: #fff;
+        text-decoration: none;
+        transition: all 0.3s ease-in-out;
+    }
+    .category-card:hover {
+        background-color: #f8f9fa;
+        transform: scale(1.05);
+    }
+    .icon-box {
+        font-size: 24px;
+    }
+
+    .icon-box i {
+    font-size: 28px; /* Increase icon size */
+    transition: transform 0.3s ease-in-out;
+    }
+
+    .category-card:hover .icon-box i {
+        transform: rotate(15deg) scale(1.2); /* Rotate & scale icon on hover */
+    }
+
+
+</style>
+    
+{% endblock cssimports %}
+    
+
+{% block main %}
+<main id="main">
+    <section class="categories-section py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Explore Categories</h2>
+            <div class="row">
+    {% if all_categories %}
+        {% for category in all_categories %}
+            <div class="col-md-4 col-sm-6 mb-4">
+            <a href="{% url 'blogs:category' category.slug %}" class="category-card d-flex align-items-center p-3 shadow-sm rounded">
+                <div class="icon-box me-3">
+                    {% if "tech" in category.name|lower %}
+                        <i class="bi bi-cpu text-info"></i>
+                    {% elif "art" in category.name|lower %}
+                        <i class="bi bi-palette text-success"></i>
+                    {% elif "music" in category.name|lower %}
+                        <i class="bi bi-music-note-beamed text-danger"></i>
+                    {% elif "travel" in category.name|lower %}
+                        <i class="bi bi-globe text-success"></i>
+                    {% elif "news" in category.name|lower %}
+                        <i class="bi bi-newspaper text-primary"></i>
+                    {% elif "movies" in category.name|lower %}
+                        <i class="bi bi-nemusic-note-beamed text-danger"></i>
+                    {% elif "business" in category.name|lower %}
+                        <i class="bi bi-bar-chart text-secondary"></i>
+                    {% elif "gaming" in category.name|lower %}
+                        <i class="bi bi-controller text-purple"></i>
+                    {% elif "education" in category.name|lower %}
+                        <i class="bi bi-book text-warning"></i>
+                    {% elif "sports" in category.name|lower %}
+                        <i class="bi bi-dribbble text-warning"></i>
+                        
+                    {% else %}
+                        <i class="bi bi-folder text-muted"></i> <!-- Default icon -->
+                    {% endif %}
+                </div>
+                <div>
+                    <h5 class="mb-1">{{ category.name }}</h5>
+                    <p class="text-muted small">View posts in this category</p>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-center">No categories found.</p>
+    {% endif %}
+</div>
+
+        </div>
+    </section>
+</main>
+{% endblock main %}

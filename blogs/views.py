@@ -117,11 +117,12 @@ def loginview(request):
 
 def categoryview(request, slug):
     category = Category.objects.filter(slug=slug)
+    slug = slug
     all_categories = Category.objects.all()
     category_posts = Blog.objects.filter(category__slug=slug)
     trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)[:5]
     latest_posts = Blog.objects.all().order_by('-created_at')[:5]
-    paginator = Paginator(category_posts, 3)
+    paginator = Paginator(category_posts, 4)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
@@ -131,6 +132,7 @@ def categoryview(request, slug):
         'latest_posts':latest_posts,
         'all_categories':all_categories,
         'page_obj':page_obj,
+        'slug':slug,
     }
     return render(request, 'blogs/category.html', context)
 
@@ -295,4 +297,13 @@ def reset_password(request, reset_id):
 def logout_view(request):
 	logout(request)
 	return redirect('blogs:login')
-        
+
+
+def categoriesview2(request):
+    all_categories = Category.objects.all()
+
+    context = {
+        'all_categories':all_categories,
+    }
+    
+    return render(request, 'blogs/cats.html', context)
