@@ -28,6 +28,22 @@
 
   
   {% block cssimports %}
+
+    <style>
+        .mobile-nav-toggle {
+      font-size: 28px; /* Adjust size if needed */
+      cursor: pointer;
+      display: inline-block;
+      position: absolute;
+      right: 20px; /* Adjust spacing from right */
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 9999; /* Make sure it's above everything */
+    }
+
+
+
+  </style>
     
   {% endblock cssimports %}
     
@@ -44,13 +60,12 @@
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
 
-           <!-- Django Messages -->
 
 
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="{% url 'blogs:Home'%}" class="logo d-flex align-items-center navbar-brand">
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="{% static 'img/logo.png' %}" alt=""> -->
-        <h1>Stalog</h1>
+        <h1 >Stalog</h1>
       </a>
 
       <nav id="navbar" class="navbar">
@@ -82,11 +97,10 @@
 
           {% comment %} <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile" class="profile-icon"> {% endcomment %}
           {% else %}
-          <img src="{% static 'img/person-1.jpg'%}" alt="Profile Picture" class="profile-icon">
+          <img src="{% static 'img/person-icon.png'%}" alt="Profile Picture" class="profile-icon">
           {% endif %}
         </a>
         {% endif %}
-        <i class="bi bi-list mobile-nav-toggle"></i>
         <i class="bi bi-list mobile-nav-toggle"></i>
 
         <!-- ======= Search Form ======= -->
@@ -132,7 +146,7 @@
           <img src="{{ request.user.profile.profile_picture.url }}?{{ request.user.profile.updated_at|date:'U' }}" alt="Profile Picture" class="profile-icon">
 
           {% else %}
-          <img src="{% static 'img/person-1.jpg'%}" alt="Profile Picture" class="profile-icon">
+          <img src="{% static 'img/person-icon.png'%}" alt="Profile Picture" class="profile-icon">
           {% endif %}
         </div>
         <form method="POST" action="{% url 'blogs:update_profile' %}" enctype="multipart/form-data">
@@ -156,95 +170,49 @@
   </div>
 
   <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
+<footer id="footer" class="footer">
+  
+  
 
-    <div class="footer-content">
-      <div class="container">
-
-        <div class="row g-5">
-          <div class="col-lg-4">
-            <h3 class="footer-heading">About Stalog</h3>
-            <p>The trusted platform for expressing one's ideas</br>StaBlog is a dynamic blogging platform dedicated to sharing insightful, engaging, and thought-provoking content. We believe in the power of storytelling and knowledge-sharing to inspire and educate readers worldwide.
-
-From technology and lifestyle to personal growth and industry trends, StaBlog provides a space for creators to express their ideas and for audiences to stay informed.</p>
-            <p><a href="{% url 'blogs:about'%}" class="footer-link-more">Learn More</a></p>
-            <p><a href="{% url 'blogs:privacy'%}" class="footer-link-more">Privacy Policy</a></p>
-            <p><a href="{% url 'blogs:guidelines'%}" class="footer-link-more">Content Guidelines</a></p>
-          </div>
-          <div class="col-6 col-lg-2">
-            <h3 class="footer-heading">Pages</h3>
-            <ul class="footer-links list-unstyled">
-              <li><a href="{% url 'blogs:Home'%}"><i class="bi bi-chevron-right"></i> Home</a></li>
-              <li><a href="index.html"><i class="bi bi-chevron-right"></i> Blog</a></li>
-              <li><a href="{% url 'blogs:contact'%}"><i class="bi bi-chevron-right"></i> Contact</a></li>
-            </ul>
-          </div>
-          <div class="col-6 col-lg-2">
-            <h3 class="footer-heading">Categories</h3>
-            <ul class="footer-links list-unstyled">
-                {% for category in base_categories %}
-                <li><a href="{% url 'blogs:category' category.slug %}"><i class="bi bi-chevron-right"></i>{{category.name}}</a></li>
-                {% endfor %}
-
-            </ul>
-          </div>
-
-          <div class="col-lg-4">
-            <h3 class="footer-heading">Recent Posts</h3>
-
-            <ul class="footer-links footer-blog-entry list-unstyled">
-              {% for post in recent_posts%}
-              <li>
-                <a href="{% url 'blogs:single-post' post.slug %}" class="d-flex align-items-center">
-                  <img src="{{post.image.url}}" alt="" class="img-fluid me-3">
-                  <div>
-                    <div class="post-meta d-block"><span class="date">{{post.category.name}}</span> <span class="mx-1">&bullet;</span> <span>{{ post.created_at|date:"jS M Y | g:iA" }}</span></div>
-                    <span>{{post.title}}</span>
-                  </div>
-                </a>
-              </li>
-            {% endfor %}
-
-
-            </ul>
-
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer-legal">
-      <div class="container">
-
-        <div class="row justify-content-between">
-          <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-            <div class="copyright">
-              © Copyright <strong><span>Uncle P Edits</span></strong>. All Rights Reserved
-            </div>
-
-            <div class="credits">
-              Designed by <a href="">Uncle P</a>
-            </div>
-
-          </div>
-
-          <div class="col-md-6">
-            <div class="social-links mb-3 mb-lg-0 text-center text-md-end">
-              <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-              <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-              <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-              <a href="#" class="google-plus"><i class="bi bi-skype"></i></a>
-              <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-            </div>
-
-          </div>
-
+  <div class="footer-legal">
+    <div class="container">
+      
+      <div class="row">
+        <!-- Footer Links -->
+        <div class="col-lg-4 text-center text-lg-start mb-3">
+          <p><a href="{% url 'blogs:about' %}" class="footer-link-more">Learn More</a></p>
+          <p><a href="{% url 'blogs:privacy' %}" class="footer-link-more">Privacy Policy</a></p>
+          <p><a href="{% url 'blogs:guidelines' %}" class="footer-link-more">Content Guidelines</a></p>
         </div>
 
-      </div>
-    </div>
+        <!-- Copyright & Credits -->
+        <div class="col-lg-4 text-center mb-3">
+          <div class="copyright">
+            &copy; <strong>Uncle P Edits</strong>. All Rights Reserved
+          </div>
+          <div class="credits">
+            Designed by <a href="#">Uncle P</a>
+          </div>
+        </div>
 
-  </footer>
+        <!-- Social Links -->
+        <div class="col-lg-4 text-center text-lg-end">
+          <div class="social-links">
+            <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+            <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="google-plus"><i class="bi bi-skype"></i></a>
+            <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+        
+      </div>
+
+    </div>
+  </div>
+
+</footer>
+
 
   <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
@@ -280,6 +248,38 @@ From technology and lifestyle to personal growth and industry trends, StaBlog pr
   </script>
 
     {% block jsimports %}
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const mobileNavToggle = document.querySelector(".mobile-nav-toggle");
+        const navbar = document.getElementById("navbar");
+
+        if (mobileNavToggle) {
+          mobileNavToggle.addEventListener("click", function () {
+            navbar.classList.toggle("navbar-mobile");
+
+            // Toggle icon between menu (bi-list) and close (bi-x)
+            if (navbar.classList.contains("navbar-mobile")) {
+              this.classList.remove("bi-list");
+              this.classList.add("bi-x");
+            } else {
+              this.classList.remove("bi-x");
+              this.classList.add("bi-list");
+            }
+          });
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener("click", function (event) {
+          if (!navbar.contains(event.target) && !mobileNavToggle.contains(event.target)) {
+            navbar.classList.remove("navbar-mobile");
+            mobileNavToggle.classList.remove("bi-x");
+            mobileNavToggle.classList.add("bi-list");
+          }
+        });
+      });
+    </script>
+
+
     
   {% endblock jsimports %}
 

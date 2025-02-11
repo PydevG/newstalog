@@ -30,11 +30,11 @@
                             <div class="d-flex align-items-center author">
                                 {% if post.author.profile and post.author.profile.profile_picture %}
                                 <div class="photo">
-                                    <img src="{{ post.author.profile.profile_picture.url }}" alt="" class="img-fluid rounded-circle border border-primary p-1 profile-pic">
+                                    <img src="{{ post.author.profile.profile_picture.url }}" alt="" class="img-fluid p-1 profile-pic" style="width:50px; height: 50px;">
                                 </div>
                                 {% else %}
                                 <div class="photo">
-                                    <img src="{% static 'img/person-1.jpg'%}" alt="" class="img-fluid rounded-circle border border-primary p-1 profile-pic">
+                                    <img src="{% static 'img/person-1.jpg'%}" alt="" class="img-fluid p-1 profile-pic" style="width:50px; height: 50px;">
                                 </div>
                                 {% endif %}
                                 <div class="name ms-2">

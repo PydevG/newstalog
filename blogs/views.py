@@ -89,11 +89,14 @@ def singlepostview(request, slug):
         return redirect("blogs:single-post", slug=slug)  
 
     post = get_object_or_404(Blog, slug=slug, is_approved=True, is_published=True)
+    
+    slug=slug
 
     categories = Category.objects.all()
     trending_posts = Blog.objects.filter(is_trending=True, is_approved=True, is_published=True)[:5]
     latest_posts = Blog.objects.filter(is_published=True, is_approved=True).order_by('-created_at')[:5]
-    comments = Comment.objects.filter(blog=post)[:4]
+    comments = Comment.objects.filter(blog=post).order_by('-created_at')[:5]
+    all_comments = Comment.objects.filter(blog__slug=slug)
 
     context = {
         "post": post,
@@ -101,6 +104,7 @@ def singlepostview(request, slug):
         'trending_posts': trending_posts,
         'latest_posts': latest_posts,
         'comments': comments,
+        'all_comments': all_comments,
     }
     return render(request, 'blogs/single-post.html', context)
 

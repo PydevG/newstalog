@@ -8,6 +8,8 @@ from .forms import ContactMessageReplyForm
 from django.urls import path
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.middleware.csrf import get_token
+from django.http import HttpRequest
 
 @admin.register(PageVisit)
 class PageVisitAdmin(admin.ModelAdmin):
@@ -228,6 +230,8 @@ class UpdatedPostAdmin(admin.ModelAdmin):
 
     def approve_action(self, obj):
         """ Button to approve a single post. """
+        request = HttpRequest()
+        csrf_token = get_token(request) 
         return format_html(
             '''
             <form method="POST" action="{}">
@@ -237,11 +241,14 @@ class UpdatedPostAdmin(admin.ModelAdmin):
             </form>
             ''',
             reverse('admin:blogs_updatedpost_changelist'),  # Admin action URL
+            csrf_token,
             obj.id
         )
 
     def reject_action(self, obj):
         """ Button to reject a single post. """
+        request = HttpRequest()
+        csrf_token = get_token(request) 
         return format_html(
             '''
             <form method="POST" action="{}">
@@ -251,6 +258,7 @@ class UpdatedPostAdmin(admin.ModelAdmin):
             </form>
             ''',
             reverse('admin:blogs_updatedpost_changelist'),
+            csrf_token,
             obj.id
         )
 

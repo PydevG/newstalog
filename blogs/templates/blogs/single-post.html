@@ -4,7 +4,6 @@
 <title>Stalog</title>
 {% endblock title %}
 
-
 {% block cssimports %}
 <style>
 .comment-body {
@@ -44,9 +43,12 @@
     margin-bottom: 15px;
 }
 
+.modal-content {
+    max-width: 90%;
+    margin: auto;
+}
 </style>
 {% endblock cssimports %}
-  
 
 <body>
 {% block main %}
@@ -54,9 +56,8 @@
     <section class="single-post-content">
         <div class="container">
             <div class="row">
+                <!-- Main Content -->
                 <div class="col-md-9 post-content" data-aos="fade-up">
-
-                    <!-- ======= Single Post Content ======= -->
                     {% if post.is_published and post.is_approved %}
                     <div class="single-post">
                         <div class="post-meta">
@@ -65,16 +66,15 @@
                             <span class="text-muted">{{ post.created_at|date:"jS M Y | g:iA" }}</span>
                         </div>
                         <h1 class="mb-4">{{ post.title }}</h1>
+                        <small class="text-danger">Author </small><span class="badge bg-primary text-light">{{post.author.username}}</span>
                         <h5 class="text-muted fst-italic">📖 Dive into this post...</h5>
 
-                        <figure class="my-4">
-                            <center>
-                                {% if post.image %}
-                                <img src="{{ post.image.url }}" alt="" class="img-fluid rounded shadow" style="max-width: 70%; max-height: 70%;">
-                                {%else%}
-                                <h3>No image</h3>
-                                {% endif %}
-                            </center>
+                        <figure class="my-4 text-center">
+                            {% if post.image %}
+                            <img src="{{ post.image.url }}" alt="" class="img-fluid rounded shadow" style="max-width: 70%;">
+                            {% else %}
+                            <h3>No image</h3>
+                            {% endif %}
                         </figure>
 
                         <p class="lead post-body">{{ post.content | safe }}</p>
@@ -82,9 +82,8 @@
                     {% else %}
                     <h3>Post is pending approval</h3>
                     {% endif %}
-                    <!-- End Single Post Content -->
 
-                    <!-- ======= Comments ======= -->
+                    <!-- Comments Section -->
                     <div class="comments">
                         <h5 class="comment-title py-4"><i class="bi bi-chat-left-dots text-primary"></i> Comments</h5>
                         {% for comment in comments %}
@@ -92,9 +91,9 @@
                             <div class="flex-shrink-0">
                                 <div class="avatar avatar-sm rounded-circle border border-primary p-1">
                                     {% if comment.author.profile and comment.author.profile.profile_picture %}
-                                    <img class="avatar-img" src="{{ comment.author.profile.profile_picture.url }}" alt="User" class="img-fluid">
+                                    <img class="avatar-img" src="{{ comment.author.profile.profile_picture.url }}" alt="User">
                                     {% else %}
-                                    <img class="avatar-img" src="{% static 'img/person-1.jpg'%}" alt="User" class="img-fluid">
+                                    <img class="avatar-img" src="{% static 'img/person-icon.png' %}" alt="User">
                                     {% endif %}
                                 </div>
                             </div>
@@ -110,12 +109,19 @@
                         </div>
                         {% endfor %}
                     </div>
-                    <!-- End Comments -->
+
+                    <!-- View All Comments Button (Only for Author) -->
+                    {% if request.user == post.author %}
+                    <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#commentsModal">
+                        <i class="bi bi-eye"></i> View All Comments
+                    </button>
+                    {% endif %}
 
                     <!-- ======= Comments Form ======= -->
                     <div class="row justify-content-center mt-5">
                         <div class="col-lg-12">
                             <h5 class="comment-title"><i class="bi bi-pencil-square text-success"></i> Leave a Comment</h5>
+                            <small class="text-danger">Note: You can only comment once on a post</small>
                             <form action="" method="POST">
                                 {% csrf_token %}
                                 <div class="mb-3">
@@ -128,7 +134,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label"><i class="bi bi-chat-text"></i> Comment</label>
-                                    <textarea class="form-control" id="comment-message" name="message" placeholder="Enter your Comment" cols="5" rows="5"></textarea>
+                                    <textarea class="form-control" id="comment-message" name="message" placeholder="Enter your Comment." cols="5" rows="5" required></textarea>
                                     <small id="word-count" class="text-muted">0/40 words</small>
                                 </div>
                                 <div class="mb-3">
@@ -139,9 +145,53 @@
                     </div>
                     <!-- End Comments Form -->
 
+
+                    <!-- Comments Modal -->
+                    <div class="modal fade" id="commentsModal" tabindex="-1" aria-labelledby="commentsModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="commentsModalLabel"><i class="bi bi-chat-left-dots"></i> All Comments</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {% for comment in all_comments %}
+                                    <div class="comment d-flex mb-4">
+                                        <div class="flex-shrink-0">
+                                            <div class="avatar avatar-sm rounded-circle border border-primary p-1">
+                                                {% if comment.author.profile and comment.author.profile.profile_picture %}
+                                                <img class="avatar-img" src="{{ comment.author.profile.profile_picture.url }}" alt="User">
+                                                {% else %}
+                                                <img class="avatar-img" src="{% static 'img/person-icon.png' %}" alt="User">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-2 ms-sm-3">
+                                            <div class="comment-meta d-flex align-items-baseline">
+                                                <h6 class="me-2">{{ comment.author.username }}</h6>
+                                                <span class="text-muted small"><i class="bi bi-clock"></i> {{ comment.created_at|timesince }} ago</span>
+                                            </div>
+                                            <div class="comment-body bg-light p-3 rounded">
+                                                {{ comment.content }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% empty %}
+                                    <p class="text-muted">No comments yet.</p>
+                                    {% endfor %}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                
+
+                <!-- Sidebar (Trending Posts & Categories) -->
                 <div class="col-md-3">
-                    <!-- ======= Sidebar ======= -->
                     <div class="aside-block">
                         <h3 class="text-danger"><i class="bi bi-clock-history"></i> Recent Posts</h3>
                         {% for post in recent_posts %}
@@ -165,47 +215,11 @@
                             {% endfor %}
                         </ul>
                     </div>
-
-                    <div class="aside-block">
-                        <h3 class="aside-title"><i class="bi bi-bookmark"></i> Tags</h3>
-                        <ul class="aside-tags list-unstyled">
-                            {% for tag in post.tags.all %}
-                            <li><a href="{% url 'blogs:tag-posts' tag.slug %}" class="btn btn-outline-secondary btn-sm">{{ tag.name }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
     </section>
 </main>
-<!-- End #main -->
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const textarea = document.getElementById("comment-message");
-    const wordCountDisplay = document.getElementById("word-count");
-
-    textarea.addEventListener("input", function () {
-        let words = this.value.trim().split(/\s+/).filter(word => word.length > 0);
-
-        if (words.length > 40) {
-            this.value = words.slice(0, 40).join(" ");
-        }
-
-        wordCountDisplay.textContent = `${words.length}/40 words`;
-    });
-
-    textarea.addEventListener("keydown", function (event) {
-        let words = this.value.trim().split(/\s+/).filter(word => word.length > 0);
-
-        if (words.length >= 40 && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
-            event.preventDefault();
-        }
-    });
-});
-</script>
-
-{% endblock main%}
+{% endblock main %}
 </body>
 </html>

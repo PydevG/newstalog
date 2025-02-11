@@ -195,7 +195,7 @@
                             <span>{{  post.created_at|date:"jS M Y | g:iA" }}</span>
                         </div>
                         <h2><a href="{% url 'blogs:single-post' post.slug %}">{{ post.title }}</a></h2>
-                        <p class="mb-4 d-block">{{ post.content | truncatewords:55 }}</p>
+                        <p class="mb-4 d-block">{{ post.content|safe | truncatewords:35 }} <a href="{% url 'blogs:single-post' post.slug %}" class="text-danger">Read more</a></p>
 
                         <div class="d-flex align-items-center author">
                             <div class="photo">
