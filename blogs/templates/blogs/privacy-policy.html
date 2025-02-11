@@ -1,0 +1,66 @@
+{% extends 'blogs/base.html' %}
+{% load static %}
+
+{% block title %}
+<title>StaBlog - Privacy Policy</title>
+{% endblock title %}
+
+<body>
+{% block main %}
+  <main id="main">
+
+    <section class="py-5">
+      <div class="container" data-aos="fade-up">
+        <div class="row">
+          <div class="col-lg-12 text-center mb-5">
+            <h1 class="page-title">Privacy Policy</h1>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12">
+            <h2>1. Introduction</h2>
+            <p>At StaBlog, we value your privacy and are committed to protecting your personal data. This policy outlines how we collect, use, and safeguard your information.</p>
+
+            <h2>2. Information We Collect</h2>
+            <p>We collect various types of data, including:</p>
+            <ul>
+              <li><strong>Personal Information:</strong> Name, email address, and contact details when you sign up or contact us.</li>
+              <li><strong>Usage Data:</strong> Information about how you interact with our website, including pages visited and time spent.</li>
+              <li><strong>Cookies:</strong> Small data files stored on your device to improve user experience.</li>
+            </ul>
+
+            <h2>3. How We Use Your Information</h2>
+            <p>We use your data to:</p>
+            <ul>
+              <li>Provide and maintain our services.</li>
+              <li>Personalize user experience and deliver relevant content.</li>
+              <li>Improve website functionality and security.</li>
+              <li>Respond to inquiries and support requests.</li>
+            </ul>
+
+            <h2>4. Data Security</h2>
+            <p>We implement security measures to protect your data. However, no method of transmission over the internet is 100% secure.</p>
+
+            <h2>5. Third-Party Services</h2>
+            <p>We may use third-party services for analytics, advertising, or payments. These services have their own privacy policies.</p>
+
+            <h2>6. Your Rights</h2>
+            <p>You have the right to:</p>
+            <ul>
+              <li>Access the personal data we hold about you.</li>
+              <li>Request corrections or deletions of your data.</li>
+              <li>Opt-out of marketing communications.</li>
+            </ul>
+
+            <h2>7. Contact Us</h2>
+            <p>If you have any questions about this policy, please <a href="{% url 'blogs:contact' %}">contact us</a>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+{% endblock main %}
+</body>
+</html>

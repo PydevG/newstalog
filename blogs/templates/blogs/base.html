@@ -56,6 +56,7 @@
       <nav id="navbar" class="navbar">
         <ul>
           <li><a href="{% url 'blogs:Home'%}">Blog</a></li>
+          <li><a href="{% url 'blogs:about'%}">About</a></li>
           <li><a href="{% url 'blogs:categories'%}">Categories</a></li>
           {% if request.user.is_authenticated %}
           <li><a href="{% url 'blogs:my-posts'%}">My Posts</a></li>
@@ -81,7 +82,7 @@
 
           {% comment %} <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile" class="profile-icon"> {% endcomment %}
           {% else %}
-          <span class="bi bi-person-circle profile-icon"></span>
+          <img src="{% static 'img/person-1.jpg'%}" alt="Profile Picture" class="profile-icon">
           {% endif %}
         </a>
         {% endif %}
@@ -131,7 +132,7 @@
           <img src="{{ request.user.profile.profile_picture.url }}?{{ request.user.profile.updated_at|date:'U' }}" alt="Profile Picture" class="profile-icon">
 
           {% else %}
-          <span class="bi bi-person-circle default-profile-pic"></span>
+          <img src="{% static 'img/person-1.jpg'%}" alt="Profile Picture" class="profile-icon">
           {% endif %}
         </div>
         <form method="POST" action="{% url 'blogs:update_profile' %}" enctype="multipart/form-data">
@@ -163,8 +164,12 @@
         <div class="row g-5">
           <div class="col-lg-4">
             <h3 class="footer-heading">About Stalog</h3>
-            <p>The trusted platform for expressing one's ideas</p>
+            <p>The trusted platform for expressing one's ideas</br>StaBlog is a dynamic blogging platform dedicated to sharing insightful, engaging, and thought-provoking content. We believe in the power of storytelling and knowledge-sharing to inspire and educate readers worldwide.
+
+From technology and lifestyle to personal growth and industry trends, StaBlog provides a space for creators to express their ideas and for audiences to stay informed.</p>
             <p><a href="{% url 'blogs:about'%}" class="footer-link-more">Learn More</a></p>
+            <p><a href="{% url 'blogs:privacy'%}" class="footer-link-more">Privacy Policy</a></p>
+            <p><a href="{% url 'blogs:guidelines'%}" class="footer-link-more">Content Guidelines</a></p>
           </div>
           <div class="col-6 col-lg-2">
             <h3 class="footer-heading">Pages</h3>

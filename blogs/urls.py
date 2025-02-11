@@ -25,6 +25,8 @@ urlpatterns = [
     path('create-post/', views.create_post, name='create-post'),
     path('edit/<slug:slug>/', views.edit_post, name='edit_post'),
     path("update-profile/", views.update_profile, name="update_profile"),
+    path('privacy-policy/', views.privacyview, name='privacy'),
+    path('guidelines/', views.guidelinesview, name='guidelines'),
 
 
 

@@ -487,4 +487,8 @@ def update_profile(request):
     return redirect(request.META.get('HTTP_REFERER', 'blogs:Home'))
 
 
+def privacyview(request):
+    return render(request, "blogs/privacy-policy.html")
 
+def guidelinesview(request):
+    return render(request, "blogs/content-guidelines.html")

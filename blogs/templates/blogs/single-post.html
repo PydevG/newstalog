@@ -91,7 +91,11 @@
                         <div class="comment d-flex mb-4">
                             <div class="flex-shrink-0">
                                 <div class="avatar avatar-sm rounded-circle border border-primary p-1">
+                                    {% if comment.author.profile and comment.author.profile.profile_picture %}
                                     <img class="avatar-img" src="{{ comment.author.profile.profile_picture.url }}" alt="User" class="img-fluid">
+                                    {% else %}
+                                    <img class="avatar-img" src="{% static 'img/person-1.jpg'%}" alt="User" class="img-fluid">
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="flex-grow-1 ms-2 ms-sm-3">
