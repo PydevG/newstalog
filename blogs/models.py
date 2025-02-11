@@ -80,7 +80,16 @@ class Blog(models.Model):
     is_approved = models.BooleanField(default=False)
     is_headline = models.BooleanField(default=False)
     to_slide = models.BooleanField(default=False)
-    rejection_reason = models.TextField(blank=True, null=True)  # New field
+    rejection_reason = models.TextField(blank=True, null=True)
+    is_updated = models.BooleanField(default=False)
+    last_updated = models.DateTimeField(auto_now=True)
+    
+    def is_updated(self):
+        """Returns True if the post was modified after being approved."""
+        return self.is_approved and self.last_updated > self.created_at
+    
+    is_updated.boolean = True
+    is_updated.short_description = "Updated?"
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -206,3 +215,15 @@ class PasswordReset(models.Model):
 
     def __str__(self):
         return f"password reset for {self.user.username} at {self.created}"
+    
+    
+class UpdatedPost(models.Model):
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    original_post = models.OneToOneField(Blog, on_delete=models.CASCADE, related_name='updated_version')
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    
+
+    def __str__(self):
+        return f"Updated: {self.title}"

@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from .models import *
 from django.utils.html import format_html
 from django.core.mail import send_mail
@@ -51,28 +51,42 @@ class ContactAdmin(admin.ModelAdmin):
     replied_status.short_description = "Replied"
     
     
-from django.urls import path
-from django.utils.html import format_html
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib import admin, messages
-from .models import Blog
+
 
 class PendingApprovalFilter(admin.SimpleListFilter):
-    """Filter to display only posts that need approval."""
-    title = 'Pending Approval'
-    parameter_name = 'pending_approval'
+    """Custom filter to show only posts that need admin review."""
+    title = "Approval Status"
+    parameter_name = "pending_approval"
 
     def lookups(self, request, model_admin):
-        return [('pending', 'Pending Approval')]
+        return [
+            ("pending", "Pending Approval"),
+        ]
 
     def queryset(self, request, queryset):
-        if self.value() == 'pending':
-            return queryset.filter(is_approved=False, is_published=False)
+        if self.value() == "pending":
+            return queryset.filter(is_approved=False, rejection_reason__isnull=True)
         return queryset
 
+
+class UpdatedPostsFilter(admin.SimpleListFilter):
+    """Custom filter to show only updated posts."""
+    title = "Updated Posts"
+    parameter_name = "updated"
+
+    def lookups(self, request, model_admin):
+        return [('yes', 'Updated Posts')]
+
+    def queryset(self, request, queryset):
+        """Filter to show only posts that were modified after approval."""
+        if self.value() == 'yes':
+            return queryset.filter(is_approved=True, last_updated__gt=models.F('created_at'))
+        return queryset
+
+@admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'is_approved', 'is_published', 'is_headline', 'is_trending', 'to_slide', 'review_status', 'admin_actions')
-    list_filter = ('is_approved', 'is_published', 'is_headline', 'is_trending', 'to_slide', PendingApprovalFilter)
+    list_display = ('title', 'author', 'is_approved', 'is_published', 'is_headline', 'is_trending', 'to_slide', 'is_updated', 'review_status', 'admin_actions')
+    list_filter = ('is_approved', 'is_published', 'is_headline', 'is_trending', 'to_slide', UpdatedPostsFilter)
     search_fields = ('title', 'author__username')
 
     def review_status(self, obj):
@@ -84,82 +98,154 @@ class BlogAdmin(admin.ModelAdmin):
         return format_html('<span style="color: orange;">Pending</span>')
 
     def admin_actions(self, obj):
-        """Provides action buttons in Django Admin."""
+        """Provides approve, reject, publish, headline, trending, and slide buttons."""
         return format_html(
-            '<a class="button approve" href="approve/{}/">Approve</a> '
-            '<a class="button reject" href="reject/{}/">Reject</a> '
-            '<a class="button headline" href="toggle_headline/{}/">Headline</a> '
-            '<a class="button trending" href="toggle_trending/{}/">Trending</a> '
-            '<a class="button slide" href="toggle_slide/{}/">Slide</a>',
-            obj.id, obj.id, obj.id, obj.id, obj.id
+            '<a class="button" href="/admin/blogs/blog/approve/{}/" style="color:green;">Approve</a> | '
+            '<a class="button" href="/admin/blogs/blog/reject/{}/" style="color:red;">Reject</a> | '
+            '<a class="button" href="/admin/blogs/blog/publish/{}/" style="color:blue;">Publish</a> | '
+            '<a class="button" href="/admin/blogs/blog/toggle_headline/{}/" style="color:purple;">Headline</a> | '
+            '<a class="button" href="/admin/blogs/blog/toggle_trending/{}/" style="color:orange;">Trending</a> | '
+            '<a class="button" href="/admin/blogs/blog/toggle_slide/{}/" style="color:brown;">Slide</a>',
+            obj.id, obj.id, obj.id, obj.id, obj.id, obj.id
         )
 
-    admin_actions.short_description = "Actions"
-
-    class Media:
-        """Add custom CSS to style buttons in Django Admin."""
-        css = {"all": ("admin/css/custom_admin.css",)}
-
     def get_urls(self):
-        """Adds custom admin URLs for approving, rejecting, and marking posts."""
+        """Adds custom admin URLs for approving, rejecting, publishing, and toggling statuses."""
         urls = super().get_urls()
         custom_urls = [
             path('approve/<int:post_id>/', self.admin_site.admin_view(self.approve_post), name='admin_approve_post'),
             path('reject/<int:post_id>/', self.admin_site.admin_view(self.reject_post), name='admin_reject_post'),
+            path('publish/<int:post_id>/', self.admin_site.admin_view(self.publish_post), name='admin_publish_post'),
             path('toggle_headline/<int:post_id>/', self.admin_site.admin_view(self.toggle_headline), name='admin_toggle_headline'),
             path('toggle_trending/<int:post_id>/', self.admin_site.admin_view(self.toggle_trending), name='admin_toggle_trending'),
             path('toggle_slide/<int:post_id>/', self.admin_site.admin_view(self.toggle_slide), name='admin_toggle_slide'),
         ]
         return custom_urls + urls  
 
+    # Approve Post
     def approve_post(self, request, post_id):
-        """Handles approving a post from the Django Admin panel."""
         post = get_object_or_404(Blog, id=post_id)
         post.is_approved = True
-        post.is_published = True
-        post.rejection_reason = None
+        post.is_published = False  # Keep unpublished until explicitly published
+        post.rejection_reason = None  
         post.save()
-        messages.success(request, f'Post "{post.title}" has been approved!')
-        return redirect(request.META.get("HTTP_REFERER", "/admin/blogs/blog/"))
+        messages.success(request, f'Post "{post.title}" has been approved but not yet published.')
+        return redirect('/admin/blogs/blog/')
 
+    # Reject Post
     def reject_post(self, request, post_id):
-        """Handles rejecting a post from the Django Admin panel."""
         post = get_object_or_404(Blog, id=post_id)
         post.is_approved = False
         post.is_published = False
         post.rejection_reason = "Your post did not meet the content guidelines."
         post.save()
         messages.error(request, f'Post "{post.title}" has been rejected.')
-        return redirect(request.META.get("HTTP_REFERER", "/admin/blogs/blog/"))
+        return redirect('/admin/blogs/blog/')
 
+    # Publish Post
+    def publish_post(self, request, post_id):
+        post = get_object_or_404(Blog, id=post_id)
+        if not post.is_approved:
+            messages.error(request, f'Cannot publish "{post.title}" because it is not approved.')
+        else:
+            post.is_published = True
+            post.save()
+            messages.success(request, f'Post "{post.title}" has been published successfully.')
+        return redirect('/admin/blogs/blog/')
+
+    # Toggle Headline
     def toggle_headline(self, request, post_id):
-        """Handles toggling a post as a headline."""
         post = get_object_or_404(Blog, id=post_id)
         post.is_headline = not post.is_headline
         post.save()
         status = "set as a headline" if post.is_headline else "removed from headlines"
         messages.success(request, f'Post "{post.title}" has been {status}.')
-        return redirect(request.META.get("HTTP_REFERER", "/admin/blogs/blog/"))
+        return redirect('/admin/blogs/blog/')
 
+    # Toggle Trending
     def toggle_trending(self, request, post_id):
-        """Handles toggling a post as trending."""
         post = get_object_or_404(Blog, id=post_id)
         post.is_trending = not post.is_trending
         post.save()
         status = "set as trending" if post.is_trending else "removed from trending"
         messages.success(request, f'Post "{post.title}" has been {status}.')
-        return redirect(request.META.get("HTTP_REFERER", "/admin/blogs/blog/"))
+        return redirect('/admin/blogs/blog/')
 
+    # Toggle Slide
     def toggle_slide(self, request, post_id):
-        """Handles toggling a post to slide."""
         post = get_object_or_404(Blog, id=post_id)
         post.to_slide = not post.to_slide
         post.save()
         status = "set to slide" if post.to_slide else "removed from slides"
         messages.success(request, f'Post "{post.title}" has been {status}.')
-        return redirect(request.META.get("HTTP_REFERER", "/admin/blogs/blog/"))
+        return redirect('/admin/blogs/blog/')
 
-admin.site.register(Blog, BlogAdmin)
+from django.contrib import admin
+from django.utils.html import format_html
+from django.contrib import messages
+from .models import UpdatedPost  # Import your model
+
+
+@admin.register(UpdatedPost)
+class UpdatedPostAdmin(admin.ModelAdmin):
+    list_display = ('title', 'get_status', 'approve_action', 'reject_action')
+    actions = ['approve_selected', 'reject_selected']
+
+    def get_status(self, obj):
+        """ Show the status from the related Blog post. """
+        if obj.original_post.is_approved:
+            return "✅ Approved"
+        elif obj.original_post.rejection_reason:
+            return "❌ Rejected"
+        return "⏳ Pending"
+
+    get_status.short_description = "Status"
+
+    def approve_selected(self, request, queryset):
+        """ Approve the original blog post for selected updates. """
+        for updated_post in queryset:
+            blog_post = updated_post.original_post  # Get linked Blog post
+            blog_post.is_approved = True
+            blog_post.rejection_reason = ""  # Clear rejection reason
+            blog_post.save()
+
+        self.message_user(request, "✅ Selected updates approved successfully.", messages.SUCCESS)
+
+    approve_selected.short_description = "Approve selected updates"
+
+    def reject_selected(self, request, queryset):
+        """ Reject the original blog post for selected updates. """
+        for updated_post in queryset:
+            blog_post = updated_post.original_post
+            blog_post.is_approved = False
+            blog_post.rejection_reason = "❌ Rejected by admin"
+            blog_post.save()
+
+        self.message_user(request, "❌ Selected updates rejected.", messages.WARNING)
+
+    reject_selected.short_description = "Reject selected updates"
+
+    def approve_action(self, obj):
+        """ Approve a single post from the list view. """
+        if not obj.original_post.is_approved:
+            return format_html(
+                '<a href="{}" class="button" style="background:green;color:white;padding:5px 10px;border-radius:5px;text-decoration:none;">Approve</a>',
+                f"/admin/blogs/updatedpost/?action=approve_selected&ids={obj.id}"
+            )
+        return "✅ Approved"
+
+    def reject_action(self, obj):
+        """ Reject a single post from the list view. """
+        if obj.original_post.is_approved:
+            return format_html(
+                '<a href="{}" class="button" style="background:red;color:white;padding:5px 10px;border-radius:5px;text-decoration:none;">Reject</a>',
+                f"/admin/blogs/updatedpost/?action=reject_selected&ids={obj.id}"
+            )
+        return "❌ Rejected"
+
+    approve_action.allow_tags = True
+    reject_action.allow_tags = True
+
 admin.site.register(ContactMessage, ContactAdmin)
 admin.site.register(Category)
 admin.site.register(Tag)

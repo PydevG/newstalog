@@ -28,34 +28,6 @@
     .pending { background-color: #ffc107; color: black; }
     .rejected { background-color: #dc3545; color: white; }
 
-    /* Tooltip styling */
-    .tooltip-custom {
-        position: relative;
-        display: inline-block;
-        cursor: not-allowed;
-    }
-
-    .tooltip-custom .tooltip-text {
-        visibility: hidden;
-        background-color: black;
-        color: #fff;
-        text-align: center;
-        padding: 5px;
-        border-radius: 5px;
-        position: absolute;
-        bottom: 125%;
-        left: 50%;
-        transform: translateX(-50%);
-        white-space: nowrap;
-        font-size: 12px;
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-
-    .tooltip-custom:hover .tooltip-text {
-        visibility: visible;
-        opacity: 1;
-    }
 </style>
 {% endblock %}
 
@@ -69,8 +41,46 @@
             <i class="bx bx-plus-circle"></i> Create Post
         </a>
     </div>
+
+    <!-- 📌 Table for Updated Posts Pending Review -->
+    {% if updated_posts %}
+    <div class="mb-4">
+        <h4 class="text-warning">Updated Posts Pending Approval</h4>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-warning">
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Updated Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for updated_post in updated_posts %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ updated_post.title }}</td>
+                        <td>{{ updated_post.updated_at|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'blogs:review_update' updated_post.id %}" class="btn btn-sm btn-primary">
+                                <i class="bx bx-check-circle"></i> Review Update
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No updates pending review.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
     
-    <!-- Blog Posts Table -->
+    <!-- 📌 Table for Published and Approved Posts -->
+    <h4 class="text-success">Published Posts</h4>
     <div class="table-responsive">
         <table class="table table-hover">
             <thead class="table-dark">
@@ -115,19 +125,15 @@
                                 <i class="bx bx-show"></i>
                             </a>
                         {% elif post.rejection_reason %}
-                            <!-- View Rejection Reason Button (Triggers Modal) -->
                             <button class="btn btn-sm btn-danger" title="View Rejection Reason"
                                 data-bs-toggle="modal" data-bs-target="#rejectionReasonModal"
                                 data-reason="{{ post.rejection_reason }}">
                                 <i class="bx bx-error"></i>
                             </button>
                         {% else %}
-                            <span class="tooltip-custom">
-                                <button class="btn btn-sm btn-secondary" title="Pending" disabled>
-                                    <i class="bx bx-time"></i>
-                                </button>
-                                <span class="tooltip-text">This post is under review and cannot be viewed yet.</span>
-                            </span>
+                            <button class="btn btn-sm btn-secondary" title="Pending" disabled>
+                                <i class="bx bx-time"></i>
+                            </button>
                         {% endif %}
                         
                         <!-- Edit button always available -->
@@ -135,13 +141,12 @@
                             <i class="bx bx-edit"></i>
                         </a>
 
-                    <form method="post" action="{% url 'blogs:delete_post' post.id %}" class="d-inline">
-                    {% csrf_token %}
-                    <input type="hidden" name="post_id" value="{{ post.id }}">
-                    <button type="submit" class="btn btn-sm btn-danger" title="Delete">
-                        <i class="bx bx-trash"></i>
-                    </button>
-                </form>
+                        <form method="post" action="{% url 'blogs:delete_post' post.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 {% empty %}
@@ -177,9 +182,9 @@
     document.addEventListener("DOMContentLoaded", function() {
         var rejectionReasonModal = document.getElementById("rejectionReasonModal");
         rejectionReasonModal.addEventListener("show.bs.modal", function(event) {
-            var button = event.relatedTarget;  // Button that triggered the modal
-            var reason = button.getAttribute("data-reason");  // Get rejection reason
-            document.getElementById("rejectionReasonText").textContent = reason;  // Set modal content
+            var button = event.relatedTarget;
+            var reason = button.getAttribute("data-reason");
+            document.getElementById("rejectionReasonText").textContent = reason;
         });
     });
 </script>

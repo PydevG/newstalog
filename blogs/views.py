@@ -52,7 +52,7 @@ def analytics_dashboard(request):
 def homeview(request):
     featured_posts = Blog.objects.filter(is_published=True, is_approved=True)
     all_posts = Blog.objects.filter(is_approved=True, is_published=True).order_by('-created_at')
-    trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)[:5]
+    trending_posts = Blog.objects.filter(is_trending=True, is_approved=True, is_published=True)[:5]
     categories = Category.objects.all()
     headline_posts = Blog.objects.filter(is_headline=True, is_approved=True, is_published=True)
     slide_posts = Blog.objects.filter(to_slide=True, is_approved=True, is_published=True)[:3]
@@ -411,32 +411,35 @@ def create_post(request):
 
 @login_required
 def edit_post(request, slug):
-    blog = get_object_or_404(Blog, slug=slug)  # Get the blog post or return 404
+    blog = get_object_or_404(Blog, slug=slug)
 
-    if request.user != blog.author:  # Prevents unauthorized editing
+    if request.user != blog.author:
         return redirect('blog_list')
 
     if request.method == "POST":
         form = BlogForm(request.POST, request.FILES, instance=blog)
-        if form.is_valid():
-            blog = form.save(commit=False)
-            
-            # Update slug if title changes
-            if blog.title != form.cleaned_data['title']:
-                base_slug = slugify(form.cleaned_data['title'])
-                slug = base_slug
-                count = 1
-                while Blog.objects.filter(slug=slug).exclude(id=blog.id).exists():
-                    slug = f"{base_slug}-{count}"
-                    count += 1
-                blog.slug = slug
 
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            content = form.cleaned_data['content']
+
+            # Ensure the UpdatedPost is linked properly
+            updated_post, created = UpdatedPost.objects.get_or_create(original_post=blog, defaults={'blog': blog})
+            updated_post.blog = blog  # Assign the related Blog post
+            updated_post.title = title
+            updated_post.content = content
+            updated_post.save()
+
+            # Mark original post as under review
+            blog.is_approved = False
+            blog.is_published = False
             blog.save()
-            form.save_m2m()  # Save many-to-many fields (tags)
-            return redirect('blogs:my-posts')  # Redirect to updated post
+
+            messages.success(request, "Your post update has been submitted for review.")
+            return redirect('blogs:my-posts')
 
     else:
-        form = BlogForm(instance=blog)  # Pre-fill form with existing data
+        form = BlogForm(instance=blog)
 
     categories = Category.objects.all()
     tags = Tag.objects.all()
