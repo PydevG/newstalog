@@ -80,7 +80,6 @@
     {% endif %}
     
     <!-- 📌 Table for Published and Approved Posts -->
-    <h4 class="text-success">Published Posts</h4>
     <div class="table-responsive">
         <table class="table table-hover">
             <thead class="table-dark">
@@ -114,9 +113,9 @@
                         {% if post.is_approved and post.is_published %}
                             <span class="status-badge approved">Approved</span>
                         {% elif post.rejection_reason %}
-                            <span class="status-badge rejected">Rejected</span>
+                            <span class="status-badge rejected" title="This post was rejected by the admin">Rejected</span>
                         {% else %}
-                            <span class="status-badge pending">Under Review</span>
+                            <span class="status-badge pending" title="This post is pending admin approval">Under Review</span>
                         {% endif %}
                     </td>
                     <td>
@@ -125,13 +124,13 @@
                                 <i class="bx bx-show"></i>
                             </a>
                         {% elif post.rejection_reason %}
-                            <button class="btn btn-sm btn-danger" title="View Rejection Reason"
+                            <button class="btn btn-sm btn-danger" title="Click to view rejection reason"
                                 data-bs-toggle="modal" data-bs-target="#rejectionReasonModal"
                                 data-reason="{{ post.rejection_reason }}">
                                 <i class="bx bx-error"></i>
                             </button>
                         {% else %}
-                            <button class="btn btn-sm btn-secondary" title="Pending" disabled>
+                            <button class="btn btn-sm btn-secondary" title="Pending Review" disabled>
                                 <i class="bx bx-time"></i>
                             </button>
                         {% endif %}

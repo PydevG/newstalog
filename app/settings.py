@@ -168,3 +168,12 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 BREVO_API_KEY = config('API_KEY')
+
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': '100%',
+    },
+}

@@ -77,7 +77,7 @@
                             </center>
                         </figure>
 
-                        <p class="lead post-body">{{ post.content }}</p>
+                        <p class="lead post-body">{{ post.content | safe }}</p>
                     </div>
                     {% else %}
                     <h3>Post is pending approval</h3>

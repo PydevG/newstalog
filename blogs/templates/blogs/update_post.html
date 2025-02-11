@@ -5,6 +5,7 @@
 
 {% block cssimports %}
 <link rel="stylesheet" href="{% static 'css/create_post.css' %}">
+
 {% endblock %}
 
 {% block main %}
@@ -13,45 +14,36 @@
 
     <form method="POST" enctype="multipart/form-data" class="mt-4">
         {% csrf_token %}
-
+        {{ form.media }}  <!-- Loads CKEditor scripts -->
         <div class="row">
             <!-- Left Column -->
             <div class="col-md-8">
                 <div class="mb-3">
-                    <label for="title" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" value="{{ blog.title }}" required>
+                    <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+                    {{ form.title }}
                 </div>
 
                 <div class="mb-3">
-                    <label for="content" class="form-label">Content</label>
-                    <textarea class="form-control" id="content" name="content" rows="6" required>{{ blog.content }}</textarea>
+                    <label for="{{ form.content.id_for_label }}" class="form-label">Content</label>
+                    {{ form.content }}
                 </div>
             </div>
 
             <!-- Right Column -->
             <div class="col-md-4">
                 <div class="mb-3">
-                    <label for="category" class="form-label">Category</label>
-                    <select class="form-select" id="category" name="category">
-                        <option value="">-- Select Category --</option>
-                        {% for category in categories %}
-                        <option value="{{ category.id }}" {% if blog.category.id == category.id %}selected{% endif %}>{{ category.name }}</option>
-                        {% endfor %}
-                    </select>
+                    <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                    {{ form.category }}
                 </div>
 
                 <div class="mb-3">
-                    <label for="tags" class="form-label">Tags</label>
-                    <select class="form-select" id="tags" name="tags" multiple>
-                        {% for tag in tags %}
-                        <option value="{{ tag.id }}" {% if tag in blog.tags.all %}selected{% endif %}>{{ tag.name }}</option>
-                        {% endfor %}
-                    </select>
+                    <label for="{{ form.tags.id_for_label }}" class="form-label">Tags</label>
+                    {{ form.tags }}
                 </div>
 
                 <div class="mb-3">
-                    <label for="image" class="form-label">Upload New Image</label>
-                    <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                    <label for="{{ form.image.id_for_label }}" class="form-label">Upload New Image</label>
+                    {{ form.image }}
                     {% if blog.image %}
                         <img id="previewImage" src="{{ blog.image.url }}" class="img-thumbnail mt-2" style="max-height: 150px;">
                     {% else %}
@@ -68,42 +60,15 @@
 {% endblock %}
 
 {% block jsimports %}
-<script src="https://cdn.ckeditor.com/4.25.1-lts/full/ckeditor.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
+<script src="{% static 'ckeditor/ckeditor.js' %}"></script>
 <script>
-    // Initialize CKEditor with custom toolbar
-    CKEDITOR.replace('content', {
-        height: 300,
-        toolbar: [
-            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
-            { name: 'paragraph', items: ['NumberedList', 'BulletedList', 'Blockquote'] },
-            { name: 'insert', items: ['Image', 'Table', 'Link', 'Unlink'] },
-            { name: 'tools', items: ['Maximize'] },
-            { name: 'document', items: ['Source'] }
-        ]
+    document.addEventListener("DOMContentLoaded", function () {
+        // Initialize CKEditor
+        CKEDITOR.replace('{{ form.content.auto_id }}');
     });
 
-        document.addEventListener('DOMContentLoaded', function () {
-            if (document.getElementById('content')) {
-                CKEDITOR.replace('content', {
-                    height: 300,
-                    toolbar: [
-                        { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
-                        { name: 'paragraph', items: ['NumberedList', 'BulletedList', 'Blockquote'] },
-                        { name: 'insert', items: ['Image', 'Table', 'Link', 'Unlink'] },
-                        { name: 'tools', items: ['Maximize'] },
-                        { name: 'document', items: ['Source'] }
-                    ]
-                });
-            } else {
-                console.error("CKEditor: Textarea with id 'content' not found.");
-            }
-        });
-
-
     // Image preview
-    document.getElementById('image').addEventListener('change', function (event) {
+    document.getElementById('id_image').addEventListener('change', function (event) {
         let file = event.target.files[0];
         if (file) {
             let reader = new FileReader();

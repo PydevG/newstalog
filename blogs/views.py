@@ -406,7 +406,8 @@ def create_post(request):
 
     categories = Category.objects.all()
     tags = Tag.objects.all()
-    return render(request, "blogs/create_post.html", {"categories": categories, "tags": tags})
+    form = BlogForm()
+    return render(request, "blogs/create_post.html", {"categories": categories, "tags": tags, "form":form,})
 
 
 @login_required
