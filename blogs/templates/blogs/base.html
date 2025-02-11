@@ -74,6 +74,16 @@
         <a href="#" class="mx-2"><span class="bi-instagram"></span></a>
 
         <a href="#" class="mx-2 js-search-open"><span class="bi-search"></span></a>
+        {% if request.user.is_authenticated %}
+        <a href="#" id="profileIcon" class="mx-2">
+          {% if request.user.profile.image %}
+          <img src="{{ request.user.profile.profile_picturee.url }}" alt="Profile" class="profile-icon">
+          {% else %}
+          <span class="bi bi-person-circle profile-icon"></span>
+          {% endif %}
+        </a>
+        {% endif %}
+        <i class="bi bi-list mobile-nav-toggle"></i>
         <i class="bi bi-list mobile-nav-toggle"></i>
 
         <!-- ======= Search Form ======= -->
@@ -105,6 +115,41 @@
 {% block main %}
 
 {% endblock main %}
+
+ <!-- Profile Modal -->
+  <div id="profileModal" class="profile-modal">
+    <div class="profile-modal-content">
+      <span class="close-profile">&times;</span>
+      <div class="profile-header">
+        <h2>My Profile</h2>
+      </div>
+      <div class="profile-body">
+        <div class="profile-picture">
+          {% if request.user.profile.image %}
+          <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture">
+          {% else %}
+          <span class="bi bi-person-circle default-profile-pic"></span>
+          {% endif %}
+        </div>
+        <form method="POST" action="{% url 'blogs:update_profile' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" value="{{ request.user.username }}" readonly>
+
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" value="{{ request.user.email }}" readonly>
+
+          <label for="bio">Bio</label>
+          <textarea id="bio" name="bio">{{ request.user.profile.bio }}</textarea>
+
+          <label for="profileImage">Profile Picture</label>
+          <input type="file" id="profileImage" name="profileImage">
+
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
@@ -170,10 +215,6 @@
             </div>
 
             <div class="credits">
-              <!-- All the links in the footer should remain intact. -->
-              <!-- You can delete the links only if you purchased the pro version. -->
-              <!-- Licensing information: https://bootstrapmade.com/license/ -->
-              <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/herobiz-bootstrap-business-template/ -->
               Designed by <a href="">Uncle P</a>
             </div>
 
@@ -207,6 +248,28 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'js/main.js' %}"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const profileIcon = document.getElementById("profileIcon");
+      const profileModal = document.getElementById("profileModal");
+      const closeProfile = document.querySelector(".close-profile");
+
+      profileIcon.addEventListener("click", function (event) {
+        event.preventDefault();
+        profileModal.style.right = "0";
+      });
+
+      closeProfile.addEventListener("click", function () {
+        profileModal.style.right = "-350px";
+      });
+
+      window.addEventListener("click", function (event) {
+        if (event.target === profileModal) {
+          profileModal.style.right = "-350px";
+        }
+      });
+    });
+  </script>
 
     {% block jsimports %}
     

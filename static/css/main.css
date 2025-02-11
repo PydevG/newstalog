@@ -1301,3 +1301,67 @@ section {
 .footer .credits a {
   color: var(--color-white);
 }
+
+/* Profile Icon */
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+/* Profile Modal */
+.profile-modal {
+  position: fixed;
+  top: 0;
+  right: -350px; /* Initially hidden */
+  width: 300px;
+  height: 100%;
+  background: white;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+.profile-modal-content {
+  padding: 20px;
+}
+
+.close-profile {
+  font-size: 24px;
+  cursor: pointer;
+  display: block;
+  text-align: right;
+}
+
+.profile-header {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.profile-body {
+  text-align: center;
+}
+
+.profile-picture img, .default-profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.profile-body input,
+.profile-body textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.profile-body button {
+  width: 100%;
+  padding: 10px;
+}

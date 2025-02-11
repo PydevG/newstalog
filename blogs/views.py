@@ -23,7 +23,7 @@ from django.core.mail import send_mail
 from .utils import send_verification_email
 from django.utils.crypto import get_random_string
 from django.contrib.sites.shortcuts import get_current_site
-from .forms import BlogForm 
+from .forms import *
 from django.utils.text import slugify
 
 
@@ -377,7 +377,14 @@ def delete_post(request, id):  # id is from the URL
 
 @login_required(login_url='blogs:login')
 def create_post(request):
+    # Count the number of posts the user has created today
+    today_posts_count = Blog.objects.filter(author=request.user, created_at__date=now().date()).count()
+
     if request.method == "POST":
+        if today_posts_count >= 3:
+            messages.error(request, "You have reached the daily limit of 3 posts. Try again tomorrow!")
+            return redirect("blogs:my-posts")
+
         title = request.POST.get("title")
         content = request.POST.get("content")
         category_id = request.POST.get("category")
@@ -402,12 +409,19 @@ def create_post(request):
         if tags_ids:
             post.tags.set(Tag.objects.filter(id__in=tags_ids))
 
+        messages.success(request, "Post created successfully!")
         return redirect("blogs:my-posts")
 
     categories = Category.objects.all()
     tags = Tag.objects.all()
     form = BlogForm()
-    return render(request, "blogs/create_post.html", {"categories": categories, "tags": tags, "form":form,})
+    
+    return render(request, "blogs/create_post.html", {
+        "categories": categories,
+        "tags": tags,
+        "form": form,
+        "today_post_count": today_posts_count,  # Send count to template
+    })
 
 
 @login_required
@@ -451,3 +465,16 @@ def edit_post(request, slug):
         'categories': categories,
         'tags': tags
     })
+
+@login_required
+def update_profile(request):
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+        else:
+            messages.error(request, "Error updating profile. Please check your inputs.")
+    
+    return redirect(request.META.get('HTTP_REFERER', 'blogs:Home'))  # Redirect back
+

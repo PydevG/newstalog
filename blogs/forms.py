@@ -1,5 +1,5 @@
 from django import forms
-from .models import ContactMessage, Blog
+from .models import ContactMessage, Blog, Profile
 from ckeditor.widgets import CKEditorWidget 
 
 class ContactMessageReplyForm(forms.ModelForm):
@@ -24,3 +24,8 @@ class BlogForm(forms.ModelForm):
     class Meta:
         model = Blog
         fields = ['title', 'content', 'category', 'image', 'is_published']
+        
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ["bio", "profile_picture", "website"]

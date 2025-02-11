@@ -91,4 +91,19 @@
         }
     });
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let postCount = {{ today_post_count }};  // Passed from the view
+        let createButton = document.getElementById("submitButton");
+
+        if (postCount >= 3) {
+            createButton.disabled = true;
+            createButton.innerText = "Daily Limit Reached";
+            createButton.classList.add("btn-secondary");  // Change styling
+            createButton.classList.remove("btn-primary"); // Remove original styling
+        }
+    });
+</script>
+
 {% endblock %}
