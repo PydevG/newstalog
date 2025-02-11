@@ -361,14 +361,20 @@ def user_posts(request):
     return render(request, 'blogs/user_posts.html', {'posts': posts})
 
 @login_required
-def delete_post(request, id):
+def delete_post(request, id):  # id is from the URL
     if request.method == "POST":
         post_id = request.POST.get("post_id")
-        post = get_object_or_404(Blog, id=post_id, author=request.user)  # Ensure user owns the post
+
+        # Debugging: Print post_id to check if it's being received
+        print(f"Deleting post with ID: {post_id}")
+
+        post = get_object_or_404(Blog, id=id, author=request.user)  # Use 'id' from URL
         post.delete()
         messages.success(request, "Post deleted successfully.")
-    
-    return redirect("blogs:my-posts")  # Redirect back to the posts list
+
+    return redirect("blogs:my-posts")  # Redirect to user's posts
+
+
 @login_required(login_url='blogs:login')
 def create_post(request):
     if request.method == "POST":

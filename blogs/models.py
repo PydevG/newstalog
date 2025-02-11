@@ -61,6 +61,10 @@ class Tag(models.Model):
 
 
 
+from django.db import models
+from django.utils.text import slugify
+from django.conf import settings
+
 class Blog(models.Model):
     title = models.CharField(max_length=150)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -69,13 +73,15 @@ class Blog(models.Model):
     updated = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='blogs', default='')
     slug = models.SlugField(unique=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
+    category = models.ForeignKey('Category', on_delete=models.CASCADE, blank=True, null=True)
     tags = models.ManyToManyField('Tag', related_name='blogs', blank=True)
     is_published = models.BooleanField(default=False)
     is_trending = models.BooleanField(default=False)
     is_approved = models.BooleanField(default=False)
     is_headline = models.BooleanField(default=False)
     to_slide = models.BooleanField(default=False)
+    rejection_reason = models.TextField(blank=True, null=True)  # New field
+
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.title)
@@ -85,8 +91,18 @@ class Blog(models.Model):
                 slug = f"{base_slug}-{count}"
                 count += 1
             self.slug = slug
+
+        # Ensure that self.pk exists before querying the database
+        if self.pk and Blog.objects.filter(pk=self.pk).exists():
+            original = Blog.objects.get(pk=self.pk)
+            if original.content != self.content or original.title != self.title:
+                self.is_published = False
+                self.is_approved = False
+                self.rejection_reason = None  # Clear rejection reason on update
+
         super().save(*args, **kwargs)
-        
+
+
     def __str__(self):
         return self.title
         

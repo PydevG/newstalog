@@ -24,10 +24,7 @@ def delete_user_profile(sender, instance, **kwargs):
         
 @receiver(post_delete, sender=Blog)
 def delete_post_image(sender, instance, **kwargs):
-    try:
-        instance.image.delete()
-        print(f"image deleted")
-    except Profile.DoesNotExist:
-        print(f"No image found")
+    if instance.image:
+        instance.image.delete(save=False)  # Ensure safe deletion
 
 

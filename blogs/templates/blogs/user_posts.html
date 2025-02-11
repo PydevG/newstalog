@@ -11,7 +11,7 @@
 <style>
     /* Fix navbar overlap issue */
     .container {
-        margin-top: 100px; /* Pushes content below the navbar */
+        margin-top: 100px;
     }
 
     /* Approval Status Styles */
@@ -26,6 +26,7 @@
     }
     .approved { background-color: #28a745; color: white; }
     .pending { background-color: #ffc107; color: black; }
+    .rejected { background-color: #dc3545; color: white; }
 
     /* Tooltip styling */
     .tooltip-custom {
@@ -42,7 +43,7 @@
         padding: 5px;
         border-radius: 5px;
         position: absolute;
-        bottom: 125%; /* Position above the button */
+        bottom: 125%;
         left: 50%;
         transform: translateX(-50%);
         white-space: nowrap;
@@ -78,7 +79,7 @@
                     <th>Title</th>
                     <th>Category</th>
                     <th>Date</th>
-                    <th>Status</th>  <!-- Approval Status Column -->
+                    <th>Status</th>  
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -91,6 +92,8 @@
                             <a href="{% url 'blogs:single-post' post.slug %}" class="text-decoration-none">
                                 {{ post.title }}
                             </a>
+                        {% elif post.rejection_reason %}
+                            <span class="text-muted">{{ post.title }} (Rejected)</span>
                         {% else %}
                             <span class="text-muted">{{ post.title }} (Under Review)</span>
                         {% endif %}
@@ -100,6 +103,8 @@
                     <td>
                         {% if post.is_approved and post.is_published %}
                             <span class="status-badge approved">Approved</span>
+                        {% elif post.rejection_reason %}
+                            <span class="status-badge rejected">Rejected</span>
                         {% else %}
                             <span class="status-badge pending">Under Review</span>
                         {% endif %}
@@ -109,6 +114,13 @@
                             <a href="{% url 'blogs:single-post' post.slug %}" class="btn btn-sm btn-info" title="View">
                                 <i class="bx bx-show"></i>
                             </a>
+                        {% elif post.rejection_reason %}
+                            <!-- View Rejection Reason Button (Triggers Modal) -->
+                            <button class="btn btn-sm btn-danger" title="View Rejection Reason"
+                                data-bs-toggle="modal" data-bs-target="#rejectionReasonModal"
+                                data-reason="{{ post.rejection_reason }}">
+                                <i class="bx bx-error"></i>
+                            </button>
                         {% else %}
                             <span class="tooltip-custom">
                                 <button class="btn btn-sm btn-secondary" title="Pending" disabled>
@@ -117,17 +129,19 @@
                                 <span class="tooltip-text">This post is under review and cannot be viewed yet.</span>
                             </span>
                         {% endif %}
+                        
+                        <!-- Edit button always available -->
                         <a href="{% url 'blogs:edit_post' post.slug %}" class="btn btn-sm btn-warning" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
-                        <!-- Delete Form -->
-                        <form method="post" action="{% url 'blogs:delete_post' post.id %}" class="d-inline">
-                            {% csrf_token %}
-                            <input type="hidden" name="post_id" value="{{ post.id }}">
-                            <button type="submit" class="btn btn-sm btn-danger" title="Delete">
-                                <i class="bx bx-trash"></i>
-                            </button>
-                        </form>
+
+                    <form method="post" action="{% url 'blogs:delete_post' post.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                    <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                        <i class="bx bx-trash"></i>
+                    </button>
+                </form>
                     </td>
                 </tr>
                 {% empty %}
@@ -139,4 +153,35 @@
         </table>
     </div>
 </div>
+
+<!-- Bootstrap Modal for Rejection Reason -->
+<div class="modal fade" id="rejectionReasonModal" tabindex="-1" aria-labelledby="rejectionReasonLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectionReasonLabel">Rejection Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="rejectionReasonText">Loading...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript to Update Modal Content -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var rejectionReasonModal = document.getElementById("rejectionReasonModal");
+        rejectionReasonModal.addEventListener("show.bs.modal", function(event) {
+            var button = event.relatedTarget;  // Button that triggered the modal
+            var reason = button.getAttribute("data-reason");  // Get rejection reason
+            document.getElementById("rejectionReasonText").textContent = reason;  // Set modal content
+        });
+    });
+</script>
+
 {% endblock %}
