@@ -71,7 +71,9 @@
 
                         <figure class="my-4 text-center">
                             {% if post.image %}
-                            <img src="{{ post.image.url }}" alt="" class="img-fluid rounded shadow" style="max-width: 70%;">
+                            <img src="{{ post.image.url }}" alt="Post Image" class="img-fluid rounded shadow"
+                                style="max-width: 75%; cursor: pointer;" 
+                                data-bs-toggle="modal" data-bs-target="#imageModal">
                             {% else %}
                             <h3>No image</h3>
                             {% endif %}
@@ -82,6 +84,21 @@
                     {% else %}
                     <h3>Post is pending approval</h3>
                     {% endif %}
+
+                    <!-- Bootstrap Modal -->
+                    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Image</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img id="modalImage" src="{{ post.image.url }}" class="img-fluid rounded shadow" alt="Full Image">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Comments Section -->
                     <div class="comments">
@@ -117,6 +134,8 @@
                     </button>
                     {% endif %}
 
+                    {% if request.user.is_authenticated %}
+
                     <!-- ======= Comments Form ======= -->
                     <div class="row justify-content-center mt-5">
                         <div class="col-lg-12">
@@ -144,7 +163,11 @@
                         </div>
                     </div>
                     <!-- End Comments Form -->
+                    {% else %}
+                    
+                    <span class="badge bg-light text-danger">Login to comment</span>
 
+                    {% endif %}
 
                     <!-- Comments Modal -->
                     <div class="modal fade" id="commentsModal" tabindex="-1" aria-labelledby="commentsModalLabel" aria-hidden="true">

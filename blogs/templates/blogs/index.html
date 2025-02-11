@@ -161,7 +161,7 @@
                                    style="background-image: url('{{post.image.url}}');">
                                     <div class="img-bg-inner">
                                         <h2>{{post.title}}</h2>
-                                        <p>{{post.content | truncatewords:15 }}</p>
+                                        {% comment %} <p>{{post.content|safe | truncatewords:15 }}</p> {% endcomment %}
                                     </div>
                                 </a>
                             </div>
@@ -202,7 +202,7 @@
                                 {% if post.author.profile and post.author.profile.profile_picture %}
                                     <img src="{{ post.author.profile.profile_picture.url }}" alt="" class="img-fluid profile-icon">
                                 {% else %}
-                                    <img src="{% static 'img/person-1.jpg' %}" alt="Default Profile" class="img-fluid profile-icon">
+                                    <img src="{% static 'img/person-icon.png' %}" alt="Default Profile" class="img-fluid profile-icon">
                                 {% endif %}
                             </div>
                             <div class="name">
@@ -287,7 +287,7 @@
                                   {% if post.author.profile and post.author.profile.profile_picture %}
                                       <img src="{{ post.author.profile.profile_picture.url }}" alt="Author" class="author-img">
                                   {% else %}
-                                      <img src="{% static 'img/person-1.jpg' %}" alt="Default Profile" class="author-img">
+                                      <img src="{% static 'img/person-icon.png' %}" alt="Default Profile" class="author-img">
                                   {% endif %}
                                   <span class="author-name">{{ post.author.username }}</span>
                               </div>

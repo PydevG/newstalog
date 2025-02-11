@@ -89,8 +89,9 @@ class UpdatedPostsFilter(admin.SimpleListFilter):
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'is_approved', 'is_published', 'is_headline', 'is_trending', 'to_slide', 'is_updated', 'review_status', 'admin_actions')
-    list_filter = ('is_approved', 'is_published', 'is_headline', 'is_trending', 'to_slide', UpdatedPostsFilter)
+    list_filter = ('is_approved', 'is_published', 'is_headline', 'is_trending', 'to_slide')
     search_fields = ('title', 'author__username')
+    actions = ['approve_selected', 'publish_selected', 'add_to_slide_selected', 'mark_as_trending_selected']
 
     def review_status(self, obj):
         """Displays the review status in Django Admin."""
@@ -125,17 +126,37 @@ class BlogAdmin(admin.ModelAdmin):
         ]
         return custom_urls + urls  
 
-    # Approve Post
+    # ✅ **Bulk Actions**
+    @admin.action(description="Approve Selected Posts")
+    def approve_selected(self, request, queryset):
+        updated = queryset.update(is_approved=True)
+        self.message_user(request, f"{updated} post(s) approved successfully.", messages.SUCCESS)
+
+    @admin.action(description="Publish Selected Posts")
+    def publish_selected(self, request, queryset):
+        updated = queryset.update(is_published=True)
+        self.message_user(request, f"{updated} post(s) published successfully.", messages.SUCCESS)
+
+    @admin.action(description="Add Selected Posts to Slide")
+    def add_to_slide_selected(self, request, queryset):
+        updated = queryset.update(to_slide=True)
+        self.message_user(request, f"{updated} post(s) added to the slide.", messages.SUCCESS)
+
+    @admin.action(description="Mark Selected Posts as Trending")
+    def mark_as_trending_selected(self, request, queryset):
+        updated = queryset.update(is_trending=True)
+        self.message_user(request, f"{updated} post(s) marked as trending.", messages.SUCCESS)
+
+    # ✅ **Single Post Actions**
     def approve_post(self, request, post_id):
         post = get_object_or_404(Blog, id=post_id)
         post.is_approved = True
-        post.is_published = False  # Keep unpublished until explicitly published
+        post.is_published = False  
         post.rejection_reason = None  
         post.save()
         messages.success(request, f'Post "{post.title}" has been approved but not yet published.')
         return redirect('/admin/blogs/blog/')
 
-    # Reject Post
     def reject_post(self, request, post_id):
         post = get_object_or_404(Blog, id=post_id)
         post.is_approved = False
@@ -145,7 +166,6 @@ class BlogAdmin(admin.ModelAdmin):
         messages.error(request, f'Post "{post.title}" has been rejected.')
         return redirect('/admin/blogs/blog/')
 
-    # Publish Post
     def publish_post(self, request, post_id):
         post = get_object_or_404(Blog, id=post_id)
         if not post.is_approved:
@@ -156,7 +176,6 @@ class BlogAdmin(admin.ModelAdmin):
             messages.success(request, f'Post "{post.title}" has been published successfully.')
         return redirect('/admin/blogs/blog/')
 
-    # Toggle Headline
     def toggle_headline(self, request, post_id):
         post = get_object_or_404(Blog, id=post_id)
         post.is_headline = not post.is_headline
@@ -165,7 +184,6 @@ class BlogAdmin(admin.ModelAdmin):
         messages.success(request, f'Post "{post.title}" has been {status}.')
         return redirect('/admin/blogs/blog/')
 
-    # Toggle Trending
     def toggle_trending(self, request, post_id):
         post = get_object_or_404(Blog, id=post_id)
         post.is_trending = not post.is_trending
@@ -174,7 +192,6 @@ class BlogAdmin(admin.ModelAdmin):
         messages.success(request, f'Post "{post.title}" has been {status}.')
         return redirect('/admin/blogs/blog/')
 
-    # Toggle Slide
     def toggle_slide(self, request, post_id):
         post = get_object_or_404(Blog, id=post_id)
         post.to_slide = not post.to_slide
