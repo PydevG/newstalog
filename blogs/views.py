@@ -28,6 +28,7 @@ from django.utils.text import slugify
 
 
 
+
 User = get_user_model()
 
 def analytics_dashboard(request):
@@ -468,13 +469,22 @@ def edit_post(request, slug):
 
 @login_required
 def update_profile(request):
+    profile = request.user.profile  # Get the profile instance
+
     if request.method == "POST":
-        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+
         if form.is_valid():
-            form.save()
+            if 'profile_picture' in request.FILES:  # Check if a new file was uploaded
+                profile.profile_picture.delete(save=False)  # Delete old image manually
+                profile.profile_picture = request.FILES['profile_picture']  # Assign new image
+            
+            profile.save()  # Save changes
             messages.success(request, "Profile updated successfully!")
         else:
             messages.error(request, "Error updating profile. Please check your inputs.")
     
-    return redirect(request.META.get('HTTP_REFERER', 'blogs:Home'))  # Redirect back
+    return redirect(request.META.get('HTTP_REFERER', 'blogs:Home'))
+
+
 

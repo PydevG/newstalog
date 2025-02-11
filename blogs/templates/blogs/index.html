@@ -200,9 +200,9 @@
                         <div class="d-flex align-items-center author">
                             <div class="photo">
                                 {% if post.author.profile and post.author.profile.profile_picture %}
-                                    <img src="{{ post.author.profile.profile_picture.url }}" alt="" class="img-fluid">
+                                    <img src="{{ post.author.profile.profile_picture.url }}" alt="" class="img-fluid profile-icon">
                                 {% else %}
-                                    <img src="{% static 'img/person-1.jpg' %}" alt="Default Profile" class="img-fluid">
+                                    <img src="{% static 'img/person-1.jpg' %}" alt="Default Profile" class="img-fluid profile-icon">
                                 {% endif %}
                             </div>
                             <div class="name">

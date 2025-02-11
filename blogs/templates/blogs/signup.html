@@ -57,6 +57,7 @@
     <div class="form-container">
         <h2 class="text-center mb-4">Sign Up</h2>
         <form action="" method="POST">
+            {% csrf_token %}
         {% if messages %}
         <div class="messages-container">
             {% for message in messages %}
@@ -68,7 +69,6 @@
         </div>
         {% endif %}
 
-            {% csrf_token %}
 
             <div class="input-group">
                 <i class="bx bx-user"></i>

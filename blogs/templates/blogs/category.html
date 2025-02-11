@@ -26,11 +26,13 @@
                                 <span class="text-muted">{{ post.created_at|date:"jS M Y | g:iA" }}</span>
                             </div>
                             <h3><a href="{% url 'blogs:single-post' post.slug %}" class="text-dark">{{ post.title }}</a></h3>
-                            <p class="text-muted">{{ post.content | truncatewords:25 }} <a href="{% url 'blogs:single-post' post.slug %}" class="text-danger">Read more</a></p>
+                            <p class="text-muted">{{ post.content| safe | truncatewords:25 }} <a href="{% url 'blogs:single-post' post.slug %}" class="text-danger">Read more</a></p>
                             <div class="d-flex align-items-center author">
+                                {% if post.author.profile and post.author.profile.profile_picture %}
                                 <div class="photo">
                                     <img src="{{ post.author.profile.profile_picture.url }}" alt="" class="img-fluid rounded-circle border border-primary p-1">
                                 </div>
+                                {% endif %}
                                 <div class="name ms-2">
                                     <h5 class="m-0 p-0">{{ post.author.username }}</h5>
                                 </div>

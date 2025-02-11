@@ -7,6 +7,9 @@ from django.conf import settings
 from django.utils.timezone import now
 import uuid
 from ckeditor.fields import RichTextField
+import os
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 
 
@@ -137,6 +140,20 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'{self.user.username} Profile'
+    
+    
+# Auto-delete old profile picture when a new one is uploaded
+@receiver(pre_save, sender=Profile)
+def delete_old_profile_picture(sender, instance, **kwargs):
+    if instance.pk:
+        try:
+            old_profile = Profile.objects.get(pk=instance.pk)
+            if old_profile.profile_picture and old_profile.profile_picture != instance.profile_picture:
+                if os.path.isfile(old_profile.profile_picture.path):
+                    os.remove(old_profile.profile_picture.path)
+        except Profile.DoesNotExist:
+            pass
+
 
 
 
