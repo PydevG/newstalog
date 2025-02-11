@@ -186,6 +186,7 @@
                 <div class="col-lg-4">
                     <h2 class="text-primary">HEADLINES</h2>
                     {% for post in headline_posts %}
+                    {% if post.is_approved and post.is_published %}
                     <div class="post-entry-1 lg">
                         <a href="{% url 'blogs:single-post' post.slug %}"><img src="{{ post.image.url }}" alt="" class="img-fluid"></a>
                         <div class="post-meta">
@@ -209,6 +210,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                     {% endfor %}
                 </div>
 
@@ -219,7 +221,11 @@
                         {% for post in page_obj %}
                         <div class="col-md-6">
                             <div class="post-entry-1 mainpost">
+                                {% if post.image %}
                                 <a href="{% url 'blogs:single-post' post.slug %}"><img src="{{ post.image.url }}" alt="" class="img-fluid"></a>
+                                {% else %}
+                                <h4>No image</h4>
+                                {% endif %}
                                 <div class="post-meta">
                                     <span class="badge bg-success">{{ post.category.name }}</span>
                                     <span class="mx-1">&bullet;</span>

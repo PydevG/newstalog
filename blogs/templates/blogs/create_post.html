@@ -5,13 +5,27 @@
 
 {% block cssimports %}
 <link rel="stylesheet" href="{% static 'css/create_post.css' %}">
+
+<style>
+    /* Fix for navbar overlapping title */
+    .container {
+        margin-top: 100px;
+    }
+    /* Image preview styling */
+    #previewImage {
+        display: none;
+        max-height: 150px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+</style>
 {% endblock %}
 
 {% block main %}
-<div class="container mt-5">
-    <h2 class="text-center">Create a New Blog Post</h2>
+<div class="container">
+    <h2 class="text-center mb-4">Create a New Blog Post</h2>
 
-    <form method="POST" enctype="multipart/form-data" class="mt-4">
+    <form method="POST" enctype="multipart/form-data" id="postForm">
         {% csrf_token %}
 
         <div class="row">
@@ -32,7 +46,7 @@
             <div class="col-md-4">
                 <div class="mb-3">
                     <label for="category" class="form-label">Category</label>
-                    <select class="form-select" id="category" name="category">
+                    <select class="form-select" id="category" name="category" required>
                         <option value="">-- Select Category --</option>
                         {% for category in categories %}
                         <option value="{{ category.id }}">{{ category.name }}</option>
@@ -52,11 +66,10 @@
                 <div class="mb-3">
                     <label for="image" class="form-label">Upload Image</label>
                     <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                    <img id="previewImage" src="" class="img-thumbnail mt-2" style="display: none; max-height: 150px;">
+                    <img id="previewImage" class="img-thumbnail mt-2">
                 </div>
 
-
-                <button type="submit" class="btn btn-primary w-100">Create Post</button>
+                <button type="submit" class="btn btn-primary w-100 mb-3" id="submitButton">Create Post</button>
             </div>
         </div>
     </form>
@@ -64,20 +77,44 @@
 {% endblock %}
 
 {% block jsimports %}
-<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+<!-- Updated CKEditor -->
+<script src="https://cdn.ckeditor.com/4.25.1-lts/standard/ckeditor.js"></script>
 <script>
-    // Initialize rich text editor
-    CKEDITOR.replace('content');
+    // Initialize CKEditor with custom toolbar
+    CKEDITOR.replace('content', {
+        height: 300,
+        toolbar: [
+            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
+            { name: 'paragraph', items: ['NumberedList', 'BulletedList', 'Blockquote'] },
+            { name: 'insert', items: ['Image', 'Table', 'Link', 'Unlink'] },
+            { name: 'tools', items: ['Maximize'] },
+            { name: 'document', items: ['Source'] }
+        ]
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+    let form = document.getElementById('postForm');
+    let submitButton = document.getElementById('submitButton');
+
+    form.addEventListener('submit', function () {
+        // Disable the button to prevent multiple clicks
+        submitButton.disabled = true;
+        submitButton.innerHTML = 'Submitting...'; // Optional: Change button text
+    });
+});
 
     // Image preview
     document.getElementById('image').addEventListener('change', function (event) {
-        let reader = new FileReader();
-        reader.onload = function () {
-            let img = document.getElementById('previewImage');
-            img.src = reader.result;
-            img.style.display = 'block';
-        };
-        reader.readAsDataURL(event.target.files[0]);
+        let file = event.target.files[0];
+        if (file) {
+            let reader = new FileReader();
+            reader.onload = function () {
+                let img = document.getElementById('previewImage');
+                img.src = reader.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
     });
 </script>
 {% endblock %}

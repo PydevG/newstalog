@@ -57,6 +57,7 @@
                 <div class="col-md-9 post-content" data-aos="fade-up">
 
                     <!-- ======= Single Post Content ======= -->
+                    {% if post.is_published and post.is_approved %}
                     <div class="single-post">
                         <div class="post-meta">
                             <span class="badge bg-primary text-light">{{ post.category.name }}</span> 
@@ -68,12 +69,19 @@
 
                         <figure class="my-4">
                             <center>
+                                {% if post.image %}
                                 <img src="{{ post.image.url }}" alt="" class="img-fluid rounded shadow" style="max-width: 85%;">
+                                {%else%}
+                                <h3>No image</h3>
+                                {% endif %}
                             </center>
                         </figure>
 
                         <p class="lead post-body">{{ post.content }}</p>
                     </div>
+                    {% else %}
+                    <h3>Post is pending approval</h3>
+                    {% endif %}
                     <!-- End Single Post Content -->
 
                     <!-- ======= Comments ======= -->

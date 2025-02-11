@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.utils import timezone
@@ -50,18 +51,17 @@ def analytics_dashboard(request):
 
 def homeview(request):
     featured_posts = Blog.objects.filter(is_published=True, is_approved=True)
-    all_posts = Blog.objects.all().order_by('-created_at')
+    all_posts = Blog.objects.filter(is_approved=True, is_published=True).order_by('-created_at')
     trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)[:5]
-    headline_posts = Blog.objects.filter(is_headline=True, is_approved=True)
     categories = Category.objects.all()
-    latest_posts = Blog.objects.all().order_by('-created_at')[:5]
-    slide_posts = Blog.objects.filter(to_slide=True, is_approved=True)[:3]
+    headline_posts = Blog.objects.filter(is_headline=True, is_approved=True, is_published=True)
+    slide_posts = Blog.objects.filter(to_slide=True, is_approved=True, is_published=True)[:3]
+    latest_posts = Blog.objects.filter(is_published=True, is_approved=True).order_by('-created_at')[:5] 
     paginator = Paginator(all_posts, 4)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
         'featured_posts':featured_posts,
-        'all_posts':all_posts,
         'trending_posts':trending_posts,
         'slide_posts':slide_posts,
         'headline_posts':headline_posts,
@@ -75,40 +75,41 @@ def singlepostview(request, slug):
     if request.method == 'POST':
         if request.user.is_authenticated:
             message = request.POST.get('message')
-            blog = get_object_or_404(Blog, slug=slug)
+            blog = get_object_or_404(Blog, slug=slug, is_approved=True, is_published=True)
             if Comment.objects.filter(blog=blog, author=request.user).exists():
                 messages.error(request, "You have already commented on this post.")
             else:
-                blog = get_object_or_404(Blog, slug=slug)
                 # Save the comment
-                content = request.POST.get("message")
                 Comment.objects.create(blog=blog, author=request.user, content=message)
                 messages.success(request, "Your comment has been posted.")
         else:
             messages.error(request, "You need to be logged in to comment.")
 
-        return redirect("blogs:single-post", slug=blog.slug)  # Redirect to the post page
+        return redirect("blogs:single-post", slug=slug)  
 
-    post = get_object_or_404(Blog, slug=slug)
+    post = get_object_or_404(Blog, slug=slug, is_approved=True, is_published=True)
+
     categories = Category.objects.all()
-    trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)[:5]
-    latest_posts = Blog.objects.all().order_by('-created_at')[:5]
-    comments = Comment.objects.filter(blog__slug=slug)[:4]
+    trending_posts = Blog.objects.filter(is_trending=True, is_approved=True, is_published=True)[:5]
+    latest_posts = Blog.objects.filter(is_published=True, is_approved=True).order_by('-created_at')[:5]
+    comments = Comment.objects.filter(blog=post)[:4]
+
     context = {
-        "post":post,
-        'categories':categories,
-        'trending_posts':trending_posts,
-        'latest_posts':latest_posts,
-        'comments':comments,
+        "post": post,
+        'categories': categories,
+        'trending_posts': trending_posts,
+        'latest_posts': latest_posts,
+        'comments': comments,
     }
     return render(request, 'blogs/single-post.html', context)
+
 
 
 
 def tagview(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
     posts = Blog.objects.filter(tags__slug=slug).select_related('author', 'category').prefetch_related('tags')
-    headline_posts = Blog.objects.filter(is_headline=True, is_approved=True)
+    headline_posts = Blog.objects.filter(is_headline=True, is_approved=True, is_published=True)
     trending_posts = Blog.objects.filter(is_trending=True, is_approved=True)[:5]
     paginator = Paginator(posts, 4)
     page_number = request.GET.get('page')
@@ -359,14 +360,15 @@ def user_posts(request):
     posts = Blog.objects.filter(author=request.user)
     return render(request, 'blogs/user_posts.html', {'posts': posts})
 
-@login_required(login_url='blogs:login')
-def delete_post(request, blog_id):
-    if request.method == 'DELETE':
-        post = get_object_or_404(Blog, id=blog_id, author=request.user)
+@login_required
+def delete_post(request, id):
+    if request.method == "POST":
+        post_id = request.POST.get("post_id")
+        post = get_object_or_404(Blog, id=post_id, author=request.user)  # Ensure user owns the post
         post.delete()
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False}, status=400)
-
+        messages.success(request, "Post deleted successfully.")
+    
+    return redirect("blogs:my-posts")  # Redirect back to the posts list
 @login_required(login_url='blogs:login')
 def create_post(request):
     if request.method == "POST":
@@ -382,15 +384,19 @@ def create_post(request):
             author=request.user,
             content=content,
             category=category,
-            is_published=is_published,
-            image=image
+            image=image,
+            is_published=False,
+            is_trending=False,
+            is_approved=False,
+            is_headline=False,
+            to_slide=False
         )
 
         # Add selected tags
         if tags_ids:
             post.tags.set(Tag.objects.filter(id__in=tags_ids))
 
-        return redirect("my-posts")
+        return redirect("blogs:my-posts")
 
     categories = Category.objects.all()
     tags = Tag.objects.all()
@@ -421,7 +427,7 @@ def edit_post(request, slug):
 
             blog.save()
             form.save_m2m()  # Save many-to-many fields (tags)
-            return redirect('blog_detail', slug=blog.slug)  # Redirect to updated post
+            return redirect('blogs:my-posts')  # Redirect to updated post
 
     else:
         form = BlogForm(instance=blog)  # Pre-fill form with existing data
@@ -429,7 +435,7 @@ def edit_post(request, slug):
     categories = Category.objects.all()
     tags = Tag.objects.all()
 
-    return render(request, 'blogs/edit_post.html', {
+    return render(request, 'blogs/update_post.html', {
         'form': form,
         'blog': blog,
         'categories': categories,

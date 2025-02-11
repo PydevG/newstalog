@@ -60,7 +60,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-success w-100">Update Post</button>
-                <a href="{% url 'blog_list' %}" class="btn btn-danger w-100 mt-2">Cancel</a>
+                <a href="{% url 'blogs:my-posts' %}" class="btn btn-danger w-100 mt-2">Cancel</a>
             </div>
         </div>
     </form>
@@ -68,7 +68,7 @@
 {% endblock %}
 
 {% block jsimports %}
-<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+<script src="https://cdn.ckeditor.com/4.25.1-lts/standard/ckeditor.js"></script>
 <script>
     // Initialize rich text editor
     CKEDITOR.replace('content');

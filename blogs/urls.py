@@ -21,7 +21,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path("verify-email/<str:token>/", views.verify_email, name="verify_email"),
     path('my-posts/', views.user_posts, name='my-posts'),
-    path('delete/<int:post_id>/', views.delete_post, name='delete-post'),
+    path('delete/<int:id>', views.delete_post, name='delete_post'),
     path('create-post/', views.create_post, name='create-post'),
     path('edit/<slug:slug>/', views.edit_post, name='edit_post'),
 
