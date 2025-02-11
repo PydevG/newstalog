@@ -78,7 +78,10 @@
 
 {% block jsimports %}
 <!-- Updated CKEditor -->
-<script src="https://cdn.ckeditor.com/4.25.1-lts/standard/ckeditor.js"></script>
+<script src="https://cdn.ckeditor.com/4.25.1-lts/full/ckeditor.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
 <script>
     // Initialize CKEditor with custom toolbar
     CKEDITOR.replace('content', {
@@ -92,16 +95,23 @@
         ]
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
-    let form = document.getElementById('postForm');
-    let submitButton = document.getElementById('submitButton');
+        document.addEventListener('DOMContentLoaded', function () {
+            if (document.getElementById('content')) {
+                CKEDITOR.replace('content', {
+                    height: 300,
+                    toolbar: [
+                        { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
+                        { name: 'paragraph', items: ['NumberedList', 'BulletedList', 'Blockquote'] },
+                        { name: 'insert', items: ['Image', 'Table', 'Link', 'Unlink'] },
+                        { name: 'tools', items: ['Maximize'] },
+                        { name: 'document', items: ['Source'] }
+                    ]
+                });
+            } else {
+                console.error("CKEditor: Textarea with id 'content' not found.");
+            }
+        });
 
-    form.addEventListener('submit', function () {
-        // Disable the button to prevent multiple clicks
-        submitButton.disabled = true;
-        submitButton.innerHTML = 'Submitting...'; // Optional: Change button text
-    });
-});
 
     // Image preview
     document.getElementById('image').addEventListener('change', function (event) {

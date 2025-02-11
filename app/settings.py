@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'rest_framework', 
     'channels',  # optional for real-time functionality
     'jwt',
+    'ckeditor'
 ]
 
 MIDDLEWARE = [

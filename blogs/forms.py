@@ -1,5 +1,6 @@
 from django import forms
 from .models import ContactMessage, Blog
+from ckeditor.widgets import CKEditorWidget 
 
 class ContactMessageReplyForm(forms.ModelForm):
     reply = forms.CharField(
@@ -19,6 +20,7 @@ class ContactMessageReplyForm(forms.ModelForm):
 
 
 class BlogForm(forms.ModelForm):
+    content = forms.CharField(widget=CKEditorWidget())
     class Meta:
         model = Blog
         fields = ['title', 'content', 'category', 'tags', 'image', 'is_published']

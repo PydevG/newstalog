@@ -7,6 +7,7 @@ from django.conf import settings
 from .forms import ContactMessageReplyForm
 from django.urls import path
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 
 @admin.register(PageVisit)
 class PageVisitAdmin(admin.ModelAdmin):
@@ -137,7 +138,7 @@ class BlogAdmin(admin.ModelAdmin):
         post = get_object_or_404(Blog, id=post_id)
         post.is_approved = False
         post.is_published = False
-        post.rejection_reason = "Your post did not meet the content guidelines."
+        post.rejection_reason = "Your post did not meet the content guidelines.\n Kindly read the content guidelines and update your post for review"
         post.save()
         messages.error(request, f'Post "{post.title}" has been rejected.')
         return redirect('/admin/blogs/blog/')
@@ -204,9 +205,9 @@ class UpdatedPostAdmin(admin.ModelAdmin):
     def approve_selected(self, request, queryset):
         """ Approve the original blog post for selected updates. """
         for updated_post in queryset:
-            blog_post = updated_post.original_post  # Get linked Blog post
+            blog_post = updated_post.original_post
             blog_post.is_approved = True
-            blog_post.rejection_reason = ""  # Clear rejection reason
+            blog_post.rejection_reason = ""  
             blog_post.save()
 
         self.message_user(request, "✅ Selected updates approved successfully.", messages.SUCCESS)
@@ -226,22 +227,32 @@ class UpdatedPostAdmin(admin.ModelAdmin):
     reject_selected.short_description = "Reject selected updates"
 
     def approve_action(self, obj):
-        """ Approve a single post from the list view. """
-        if not obj.original_post.is_approved:
-            return format_html(
-                '<a href="{}" class="button" style="background:green;color:white;padding:5px 10px;border-radius:5px;text-decoration:none;">Approve</a>',
-                f"/admin/blogs/updatedpost/?action=approve_selected&ids={obj.id}"
-            )
-        return "✅ Approved"
+        """ Button to approve a single post. """
+        return format_html(
+            '''
+            <form method="POST" action="{}">
+                <input type="hidden" name="action" value="approve_selected">
+                <input type="hidden" name="_selected_action" value="{}">
+                <button type="submit" style="background:green;color:white;padding:5px 10px;border-radius:5px;border:none;cursor:pointer;">Approve</button>
+            </form>
+            ''',
+            reverse('admin:blogs_updatedpost_changelist'),  # Admin action URL
+            obj.id
+        )
 
     def reject_action(self, obj):
-        """ Reject a single post from the list view. """
-        if obj.original_post.is_approved:
-            return format_html(
-                '<a href="{}" class="button" style="background:red;color:white;padding:5px 10px;border-radius:5px;text-decoration:none;">Reject</a>',
-                f"/admin/blogs/updatedpost/?action=reject_selected&ids={obj.id}"
-            )
-        return "❌ Rejected"
+        """ Button to reject a single post. """
+        return format_html(
+            '''
+            <form method="POST" action="{}">
+                <input type="hidden" name="action" value="reject_selected">
+                <input type="hidden" name="_selected_action" value="{}">
+                <button type="submit" style="background:red;color:white;padding:5px 10px;border-radius:5px;border:none;cursor:pointer;">Reject</button>
+            </form>
+            ''',
+            reverse('admin:blogs_updatedpost_changelist'),
+            obj.id
+        )
 
     approve_action.allow_tags = True
     reject_action.allow_tags = True

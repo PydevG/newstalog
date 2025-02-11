@@ -6,6 +6,9 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.utils.timezone import now
 import uuid
+from ckeditor.fields import RichTextField
+
+
 
 # User = get_user_model()
 
@@ -60,15 +63,10 @@ class Tag(models.Model):
 
 
 
-
-from django.db import models
-from django.utils.text import slugify
-from django.conf import settings
-
 class Blog(models.Model):
     title = models.CharField(max_length=150)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    content = models.TextField()
+    content = RichTextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='blogs', default='')
