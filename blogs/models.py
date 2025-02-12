@@ -10,7 +10,8 @@ from ckeditor.fields import RichTextField
 import os
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-
+from PIL import Image
+import os
 
 
 # User = get_user_model()
@@ -84,11 +85,11 @@ class Blog(models.Model):
     rejection_reason = models.TextField(blank=True, null=True)
     is_updated = models.BooleanField(default=False)
     last_updated = models.DateTimeField(auto_now=True)
-    
+
     def is_updated(self):
         """Returns True if the post was modified after being approved."""
         return self.is_approved and self.last_updated > self.created_at
-    
+
     is_updated.boolean = True
     is_updated.short_description = "Updated?"
 
@@ -110,11 +111,29 @@ class Blog(models.Model):
                 self.is_approved = False
                 self.rejection_reason = None  # Clear rejection reason on update
 
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs)  # Save first to get the image path
 
+        # Convert uploaded image to WEBP format
+        if self.image:
+            img_path = self.image.path
+            img = Image.open(img_path)
+
+            # Convert to WEBP
+            webp_path = os.path.splitext(img_path)[0] + ".webp"
+            img.save(webp_path, "WEBP", quality=80)  # Save as WEBP
+
+            # Update the ImageField to point to the new WEBP file
+            self.image.name = os.path.splitext(self.image.name)[0] + ".webp"
+            super().save(update_fields=["image"])  # Save again with the new image
+
+            # Delete the original non-WEBP image
+            if os.path.exists(img_path):
+                os.remove(img_path)
 
     def __str__(self):
         return self.title
+
+
         
 class Comment(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='comments')
@@ -183,12 +202,12 @@ class CustomUser(AbstractUser):
     
     groups = models.ManyToManyField(
         'auth.Group',
-        related_name='customuser_set',  # ✅ Avoids clash
+        related_name='customuser_set', 
         blank=True
     )
     user_permissions = models.ManyToManyField(
         'auth.Permission',
-        related_name='customuser_permissions_set',  # ✅ Avoids clash
+        related_name='customuser_permissions_set',
         blank=True
     )
     
