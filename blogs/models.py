@@ -12,6 +12,8 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from PIL import Image
 import os
+from django.core.files import File
+from io import BytesIO
 
 
 # User = get_user_model()
@@ -114,21 +116,24 @@ class Blog(models.Model):
         super().save(*args, **kwargs)  # Save first to get the image path
 
         # Convert uploaded image to WEBP format
-        if self.image:
+              # Check if the image is being uploaded
+        if self.image and not self.image.name.endswith(".webp"):
             img_path = self.image.path
             img = Image.open(img_path)
 
             # Convert to WEBP
-            webp_path = os.path.splitext(img_path)[0] + ".webp"
-            img.save(webp_path, "WEBP", quality=80)  # Save as WEBP
+            webp_io = BytesIO()  # Memory buffer to store the new image
+            img.save(webp_io, "WEBP", quality=80)
 
-            # Update the ImageField to point to the new WEBP file
-            self.image.name = os.path.splitext(self.image.name)[0] + ".webp"
-            super().save(update_fields=["image"])  # Save again with the new image
+            # Create a new File object
+            webp_filename = os.path.splitext(self.image.name)[0] + ".webp"
+            self.image.save(webp_filename, File(webp_io), save=False)
 
-            # Delete the original non-WEBP image
+            # Delete the original image file
             if os.path.exists(img_path):
                 os.remove(img_path)
+
+        super().save(*args, **kwargs)  # Save the model with the new image
 
     def __str__(self):
         return self.title
@@ -160,6 +165,8 @@ class Profile(models.Model):
     tiktok = models.CharField(max_length=100, blank=True, null=True)
     verification_token = models.CharField(max_length=100, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
+    
+
 
     def __str__(self):
         return f'{self.user.username} Profile'

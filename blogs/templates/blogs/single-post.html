@@ -47,6 +47,30 @@
     max-width: 90%;
     margin: auto;
 }
+
+.social-links {
+    display: flex;
+    gap: 15px;  /* Spacing between icons */
+    justify-content: center;  /* Center icons */
+    margin-top: 10px;
+}
+
+.social-icon {
+    font-size: 24px;
+    color: #333;  /* Default color */
+    transition: color 0.3s ease;
+}
+
+.social-icon:hover {
+    color: #007bff;  /* Change color on hover */
+}
+
+/* Specific colors for each platform */
+.social-icon.facebook { color: #1877F2; }  /* Facebook Blue */
+.social-icon.twitter { color: #000; }  /* X (Twitter) Black */
+.social-icon.tiktok { color: #000; }  /* TikTok Black */
+.social-icon.instagram { color: #E4405F; }  /* Instagram Pink */
+
 </style>
 {% endblock cssimports %}
 
@@ -67,6 +91,49 @@
                         </div>
                         <h1 class="mb-4">{{ post.title }}</h1>
                         <small class="text-danger">Author </small><span class="badge bg-primary text-light">{{post.author.username}}</span>
+                        <div class="social-links">
+                        {% if post.author.profile.facebook %}
+                            <a href="{{ post.author.profile.facebook }}" target="_blank" class="social-icon facebook">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                        {% else %}
+                            <a href="https://www.facebook.com" target="_blank" class="social-icon facebook">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                        {% endif %}
+
+                        {% if post.author.profile.twitter %}
+                            <a href="{{ post.author.profile.twitter }}" target="_blank" class="social-icon twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        {% else %}
+                            <a href="https://www.twitter.com" target="_blank" class="social-icon twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        {% endif %}
+
+                        {% if post.author.profile.tiktok %}
+                            <a href="{{ post.author.profile.tiktok }}" target="_blank" class="social-icon tiktok">
+                                <i class="fab fa-tiktok"></i>
+                            </a>
+                        {% else %}
+                            <a href="https://www.tiktok.com" target="_blank" class="social-icon tiktok">
+                                <i class="fab fa-tiktok"></i>
+                            </a>
+                        {% endif %}
+
+                        {% if post.author.profile.instagram %}
+                            <a href="{{ post.author.profile.instagram }}" target="_blank" class="social-icon instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        {% else %}
+                            <a href="https://www.instagram.com" target="_blank" class="social-icon instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+
+
                         <h5 class="text-muted fst-italic">📖 Dive into this post...</h5>
 
                         <figure class="my-4 text-center">

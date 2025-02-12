@@ -457,7 +457,7 @@ section {
   margin-bottom: 30px;
 }
 
-.post-entry-1 img {
+.post-entry-1 img{
   margin-bottom: 30px;
 }
 
@@ -477,6 +477,15 @@ section {
   font-size: 40px;
   line-height: 1;
 }
+
+/* Ensure all post images are the same size */
+.mainpost img {
+  width: 100%;         /* Make images responsive */
+  height: 200px;       /* Fixed height for consistency */
+  object-fit: cover;   /* Maintain aspect ratio, crop if necessary */
+  margin-bottom: 30px;
+}
+
 
 .post-meta {
   font-size: 11px;
@@ -922,12 +931,6 @@ section {
   border: 1px solid rgba(var(--color-black-rgb), 0.5);
 }
 
-/*--------------------------------------------------------------
-# Comments
---------------------------------------------------------------*/
-.comment {
-  /* Font not working in <textarea> for this version of bs */
-}
 
 .comment .avatar {
   position: relative;
@@ -1297,4 +1300,90 @@ section {
 
 .footer .credits a {
   color: var(--color-white);
+}
+
+/* Profile Icon */
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+/* Profile Modal */
+.profile-modal {
+  position: fixed;
+  top: 0;
+  right: -350px; /* Initially hidden */
+  width: 300px;
+  height: 100%;
+  background: white;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease-in-out;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modal Content */
+.profile-modal-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Full height */
+}
+
+/* Close Button */
+.close-profile {
+  font-size: 24px;
+  cursor: pointer;
+  text-align: right;
+}
+
+/* Profile Header */
+.profile-header {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Scrollable Profile Body */
+.profile-body {
+  flex-grow: 1; /* Allows the content to take up space */
+  overflow-y: auto; /* Enables scrolling */
+  padding-right: 10px; /* Avoids scrollbar overlap */
+}
+
+/* Hide scrollbar for Webkit (Chrome, Safari) */
+.profile-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.profile-body::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+/* Profile Picture */
+.profile-picture img, .default-profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+/* Input & Textarea Fields */
+.profile-body input,
+.profile-body textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+/* Buttons */
+.profile-body button {
+  width: 100%;
+  padding: 10px;
 }

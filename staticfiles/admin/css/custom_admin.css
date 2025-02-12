@@ -1,0 +1,31 @@
+a.button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a.approve {
+    background-color: green;
+    color: white;
+}
+
+a.reject {
+    background-color: red;
+    color: white;
+}
+
+a.headline {
+    background-color: blue;
+    color: white;
+}
+
+a.trending {
+    background-color: purple;
+    color: white;
+}
+
+a.slide {
+    background-color: orange;
+    color: white;
+}

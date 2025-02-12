@@ -31,17 +31,25 @@ class ProfileForm(forms.ModelForm):
         fields = ['profile_picture', 'bio', 'website', 'facebook', 'twitter', 'x', 'tiktok']
     
     def clean_facebook(self):
-        username = self.cleaned_data.get('facebook')
-        return f"https://www.facebook.com/{username}" if username else ""
+        url = (self.cleaned_data.get('facebook') or "").strip()
+        if url and not url.startswith("https://www.facebook.com/"):
+            return f"https://www.facebook.com/{url.lstrip('/')}"
+        return url
 
     def clean_twitter(self):
-        username = self.cleaned_data.get('twitter')
-        return f"https://www.twitter.com/{username}" if username else ""
+        url = (self.cleaned_data.get('twitter') or "").strip()
+        if url and not url.startswith("https://www.twitter.com/"):
+            return f"https://www.twitter.com/{url.lstrip('/')}"
+        return url
 
     def clean_x(self):
-        username = self.cleaned_data.get('x')
-        return f"https://www.x.com/{username}" if username else ""
+        url = (self.cleaned_data.get('x') or "").strip()
+        if url and not url.startswith("https://www.x.com/"):
+            return f"https://www.x.com/{url.lstrip('/')}"
+        return url
 
     def clean_tiktok(self):
-        username = self.cleaned_data.get('tiktok')
-        return f"https://www.tiktok.com/@{username}" if username else ""
+        url = (self.cleaned_data.get('tiktok') or "").strip()
+        if url and not url.startswith("https://www.tiktok.com/@"):
+            return f"https://www.tiktok.com/@{url.lstrip('@/')}"
+        return url
