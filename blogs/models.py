@@ -135,12 +135,17 @@ class Profile(models.Model):
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
     website = models.URLField(blank=True, null=True)
+    facebook = models.CharField(max_length=100, blank=True, null=True)
+    twitter = models.CharField(max_length=100, blank=True, null=True)
+    x = models.CharField(max_length=100, blank=True, null=True)
+    tiktok = models.CharField(max_length=100, blank=True, null=True)
     verification_token = models.CharField(max_length=100, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.user.username} Profile'
-    
+
+
     
 # Auto-delete old profile picture when a new one is uploaded
 @receiver(pre_save, sender=Profile)

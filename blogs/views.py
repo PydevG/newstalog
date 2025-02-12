@@ -475,22 +475,28 @@ def edit_post(request, slug):
 
 @login_required
 def update_profile(request):
-    profile = request.user.profile  # Get the profile instance
+    user_profile = request.user.profile  # Fetch the user's profile
 
     if request.method == "POST":
-        form = ProfileForm(request.POST, request.FILES, instance=profile)
-
+        form = ProfileForm(request.POST, request.FILES, instance=user_profile)
         if form.is_valid():
-            if 'profile_picture' in request.FILES:  # Check if a new file was uploaded
-                profile.profile_picture.delete(save=False)  # Delete old image manually
-                profile.profile_picture = request.FILES['profile_picture']  # Assign new image
-            
-            profile.save()  # Save changes
-            messages.success(request, "Profile updated successfully!")
-        else:
-            messages.error(request, "Error updating profile. Please check your inputs.")
-    
-    return redirect(request.META.get('HTTP_REFERER', 'blogs:Home'))
+            form.save()
+            messages.success(request, "Your profile has been updated successfully!")
+            return redirect('blogs:update_profile')
+
+    else:
+        form = ProfileForm(instance=user_profile)
+
+    # Social media links with user data
+    social_links = {
+        "Facebook": {"prefix": "https://www.facebook.com/", "value": user_profile.facebook if user_profile.facebook else ""},
+        "Twitter": {"prefix": "https://www.twitter.com/", "value": user_profile.twitter if user_profile.twitter else ""},
+        "X": {"prefix": "https://www.x.com/", "value": user_profile.x if user_profile.x else ""},
+        "TikTok": {"prefix": "https://www.tiktok.com/@", "value": user_profile.tiktok if user_profile.tiktok else ""}
+    }
+
+    return render(request, 'blogs/update_profile.html', {"form": form, "social_links": social_links})
+
 
 
 def privacyview(request):

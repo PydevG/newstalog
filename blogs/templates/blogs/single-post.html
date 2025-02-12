@@ -67,6 +67,20 @@
                         </div>
                         <h1 class="mb-4">{{ post.title }}</h1>
                         <small class="text-danger">Author </small><span class="badge bg-primary text-light">{{post.author.username}}</span>
+                        <!-- Social Media Links Section -->
+                        <div class="mt-4">
+                            <h5 class="fw-bold text-primary">Follow Me</h5>
+                            <div class="d-flex gap-3">
+                                {% for platform, data in social_links.items %}
+                                {% if data.value %}  {# Only show if the user has provided a username #}
+                                    <a href="{{ data.prefix }}{{ data.value }}" target="_blank" class="text-decoration-none">
+                                        <i class="bi bi-{{ platform|lower }} fs-4"></i>
+                                    </a>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+
                         <h5 class="text-muted fst-italic">📖 Dive into this post...</h5>
 
                         <figure class="my-4 text-center">
