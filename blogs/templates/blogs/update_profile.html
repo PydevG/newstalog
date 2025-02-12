@@ -15,9 +15,8 @@
       z-index: 9999; /* Make sure it's above everything */
     }
 
-      /* Profile Modal */
 .profile-modal {
-  display: none;
+  display: none; /* Initially hidden */
   position: fixed;
   z-index: 1000;
   left: 0;
@@ -27,21 +26,21 @@
   background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
-  overflow: hidden; /* Prevent background scroll */
 }
 
-/* Modal Content (Force Scroll) */
+/* Modal Content */
 .profile-modal-content {
   background: white;
   padding: 20px;
   border-radius: 8px;
   width: 50%;
   max-width: 500px;
-  height: 80vh; /* Set a fixed height */
+  height: 80vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Prevent content overflow */
+  overflow: hidden;
 }
+
 
 /* Scrollable Profile Body */
 .profile-body {
@@ -136,30 +135,34 @@
 </div>
 {% endblock main %}
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const profileIcon = document.getElementById("profileIcon");
-      const profileModal = document.getElementById("profileModal");
-      const closeProfile = document.querySelector(".close-profile");
-
-      profileIcon.addEventListener("click", function (event) {
-        event.preventDefault();
-        profileModal.style.right = "0";
-      });
-
-      closeProfile.addEventListener("click", function () {
-        profileModal.style.right = "-350px";
-      });
-
-      window.addEventListener("click", function (event) {
-        if (event.target === profileModal) {
-          profileModal.style.right = "-350px";
-        }
-      });
-    });
-  </script>
 
     {% block jsimports %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const profileIcon = document.getElementById("profileIcon");
+  const profileModal = document.getElementById("profileModal");
+  const closeProfile = document.querySelector(".close-profile");
+
+  if (profileIcon && profileModal && closeProfile) {
+    profileIcon.addEventListener("click", function (event) {
+      event.preventDefault();
+      profileModal.style.display = "flex"; // Show modal
+    });
+
+    closeProfile.addEventListener("click", function () {
+      profileModal.style.display = "none"; // Hide modal
+    });
+
+    window.addEventListener("click", function (event) {
+      if (event.target === profileModal) {
+        profileModal.style.display = "none"; // Hide when clicking outside
+      }
+    });
+  }
+});
+</script>
+
+
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const mobileNavToggle = document.querySelector(".mobile-nav-toggle");

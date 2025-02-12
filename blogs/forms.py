@@ -28,7 +28,7 @@ class BlogForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['profile_picture', 'bio', 'website', 'facebook', 'twitter', 'x', 'tiktok']
+        fields = ['profile_picture', 'bio', 'website', 'facebook', 'twitter', 'x', 'instagram', 'tiktok']
     
     def clean_facebook(self):
         url = (self.cleaned_data.get('facebook') or "").strip()
@@ -46,6 +46,12 @@ class ProfileForm(forms.ModelForm):
         url = (self.cleaned_data.get('x') or "").strip()
         if url and not url.startswith("https://www.x.com/"):
             return f"https://www.x.com/{url.lstrip('/')}"
+        return url
+    
+    def clean_instagram(self):
+        url = (self.cleaned_data.get('x') or "").strip()
+        if url and not url.startswith("https://www.instagram.com/"):
+            return f"https://www.instagram.com/{url.lstrip('/')}"
         return url
 
     def clean_tiktok(self):

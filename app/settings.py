@@ -181,3 +181,11 @@ CKEDITOR_CONFIGS = {
         'width': '100%',
     },
 }
+
+MPESA_CONFIG = {
+    "CONSUMER_KEY": config('CONSUMER_KEY'),
+    "CONSUMER_SECRET": config('CONSUMER_SECRET'),
+    "BUSINESS_SHORTCODE": config('BUSINESS_SHORTCODE'),
+    "PASSKEY": config('PASSKEY'),
+    "CALLBACK_URL": config('CALLBACK_URL'),
+}

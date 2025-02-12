@@ -51,7 +51,7 @@
 .social-links {
     display: flex;
     gap: 15px;  /* Spacing between icons */
-    justify-content: center;  /* Center icons */
+
     margin-top: 10px;
 }
 
@@ -91,7 +91,9 @@
                         </div>
                         <h1 class="mb-4">{{ post.title }}</h1>
                         <small class="text-danger">Author </small><span class="badge bg-primary text-light">{{post.author.username}}</span>
-                        <div class="social-links">
+            
+                        <div class="social-links mb-2">
+                            <span class="pt-2">Follow me</span>
                         {% if post.author.profile.facebook %}
                             <a href="{{ post.author.profile.facebook }}" target="_blank" class="social-icon facebook">
                                 <i class="fab fa-facebook"></i>

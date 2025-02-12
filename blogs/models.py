@@ -162,6 +162,7 @@ class Profile(models.Model):
     facebook = models.CharField(max_length=100, blank=True, null=True)
     twitter = models.CharField(max_length=100, blank=True, null=True)
     x = models.CharField(max_length=100, blank=True, null=True)
+    instagram = models.CharField(max_length=100, blank=True, null=True)   
     tiktok = models.CharField(max_length=100, blank=True, null=True)
     verification_token = models.CharField(max_length=100, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
@@ -206,6 +207,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=8, unique=True)
     date_of_birth = models.DateField(blank=True, null=True)
+    is_premium = models.BooleanField(default=False)  # New field for premium status
     
     groups = models.ManyToManyField(
         'auth.Group',
@@ -217,7 +219,7 @@ class CustomUser(AbstractUser):
         related_name='customuser_permissions_set',
         blank=True
     )
-    
+
     def __str__(self):
         return self.username
     

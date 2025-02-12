@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.db.models import Count, Avg, F, ExpressionWrapper, fields
 from .models import *
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib import messages
 from django.utils.timezone import now
 from django.shortcuts import render, redirect
@@ -491,6 +491,7 @@ def update_profile(request):
         "Facebook": {"prefix": "https://www.facebook.com/", "value": user_profile.facebook if user_profile.facebook else ""},
         "Twitter": {"prefix": "https://www.twitter.com/", "value": user_profile.twitter if user_profile.twitter else ""},
         "X": {"prefix": "https://www.x.com/", "value": user_profile.x if user_profile.x else ""},
+        "Instagram": {"prefix": "https://www.instagram.com/", "value": user_profile.instagram if user_profile.instagram else ""},
         "TikTok": {"prefix": "https://www.tiktok.com/@", "value": user_profile.tiktok if user_profile.tiktok else ""}
     }
 
@@ -508,9 +509,10 @@ class BlogSearchView(ListView):
     model = Blog
     template_name = 'blogs/search_results.html'
     context_object_name = 'posts'
+    paginate_by = 10  # Define pagination limit
 
     def get_queryset(self):
-        query = self.request.GET.get('q')
+        query = self.request.GET.get('q', '')
         if query:
             return Blog.objects.filter(
                 Q(title__icontains=query) | 
@@ -520,3 +522,36 @@ class BlogSearchView(ListView):
                 is_published=True  # Only show published posts
             ).distinct()
         return Blog.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        query = self.request.GET.get('q', '')
+        posts_list = self.get_queryset()
+
+        # Pagination handling
+        paginator = Paginator(posts_list, self.paginate_by)
+        page = self.request.GET.get('page')
+
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+
+        context['page_obj'] = posts  # Ensure the page_obj is set correctly
+        context['posts'] = posts  # Ensure posts is updated for iteration in template
+        context['query'] = query  # Pass search query for pagination links
+        return context
+
+
+
+@login_required
+def upgrade_to_premium(request):
+    if request.method == "POST":
+        request.user.is_premium = True
+        request.user.save()
+        messages.success(request, "You have been upgraded to Premium!")
+        return redirect("blogs:Home")
+
+    return render(request, "blogs/upgrade.html")

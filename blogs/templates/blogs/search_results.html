@@ -1,27 +1,105 @@
-{% extends 'blogs/base.html' %}
+{% extends 'blogs/index.html' %}
+{% load static %}
+{% block title %}
+<title>StaBlog - Search Results</title>
+{% endblock title %}
 
-{% block content %}
-<div class="container mt-4">
-    <h2>Search Results</h2>
+<body>
+{% block main %}
+<main id="main">
+    <section>
+        <div class="container">
+            <div class="row">
+                <!-- ======= Blog Posts Section ======= -->
+                <div class="col-md-9" data-aos="fade-up">
+                    <h3 class="category-title text-primary border-bottom pb-2">
+                        <i class="bi bi-search"></i> Search Results for "{{ query }}"
+                    </h3>
 
-    {% if posts %}
-        <p>Found {{ posts|length }} result{{ posts|length|pluralize }} for "<strong>{{ request.GET.q }}</strong>":</p>
-        <div class="row">
-            {% for post in posts %}
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ post.title }}</h5>
-                            <p class="card-text">{{ post.content|truncatewords:20 }}</p>
-                            <a href="{% url 'blogs:post_detail' post.slug %}" class="btn btn-primary">Read More</a>
+                    {% if page_obj %}
+                        {% for post in page_obj %}
+                        <div class="d-md-flex post-entry-2 half mb-4">
+                            <a href="{% url 'blogs:single-post' post.slug %}" class="me-4 thumbnail mainpost">
+                                <img src="{{ post.image.url }}" alt="" class="img-fluid rounded shadow-sm">
+                            </a>
+                            <div>
+                                <div class="post-meta">
+                                    <span class="badge bg-secondary text-light">{{ post.category.name }}</span>
+                                    <span class="mx-1">&bullet;</span>
+                                    <span class="text-muted">{{ post.created_at|date:"jS M Y | g:iA" }}</span>
+                                </div>
+                                <h3><a href="{% url 'blogs:single-post' post.slug %}" class="text-dark">{{ post.title }}</a></h3>
+                                <p class="text-muted">{{ post.content|safe|truncatewords:25 }} 
+                                    <a href="{% url 'blogs:single-post' post.slug %}" class="text-danger">Read more</a>
+                                </p>
+                                <div class="d-flex align-items-center author">
+                                    {% if post.author.profile and post.author.profile.profile_picture %}
+                                    <div class="photo">
+                                        <img src="{{ post.author.profile.profile_picture.url }}" alt="" class="img-fluid p-1 profile-pic" style="width:50px; height: 50px;">
+                                    </div>
+                                    {% else %}
+                                    <div class="photo">
+                                        <img src="{% static 'img/person-1.jpg' %}" alt="" class="img-fluid p-1 profile-pic" style="width:50px; height: 50px;">
+                                    </div>
+                                    {% endif %}
+                                    <div class="name ms-2">
+                                        <h5 class="m-0 p-0">{{ post.author.username }}</h5>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No results found for "{{ query }}". Try a different keyword.</p>
+                    {% endif %}
+
+                    <!-- ======= Pagination ======= -->
+                    <div class="text-start py-4">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?q={{ query }}&page=1" aria-label="First">
+                                        <span>&laquo;&laquo;</span> <!-- Double left arrow -->
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?q={{ query }}&page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                        <span>&laquo;</span> <!-- Single left arrow -->
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                <li class="page-item disabled">
+                                    <span class="page-link bg-light text-dark">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                                </li>
+
+                                {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?q={{ query }}&page={{ page_obj.next_page_number }}" aria-label="Next">
+                                        <span>&raquo;</span> <!-- Single right arrow -->
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?q={{ query }}&page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                        <span>&raquo;&raquo;</span> <!-- Double right arrow -->
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
                     </div>
+
                 </div>
-            {% endfor %}
+
+            </div>
         </div>
-    {% else %}
-        <p>No results found for "<strong>{{ request.GET.q }}</strong>". Try a different search.</p>
-    {% endif %}
-</div>
-{% endblock %}
+    </section>
+</main>
+<!-- End #main -->
+
+{% endblock main %}
+
+</body>
+
+</html>

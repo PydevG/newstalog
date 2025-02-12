@@ -149,6 +149,16 @@
 <main id="main">
 
     <!-- ======= Hero Slider Section ======= -->
+     <!-- Search Bar -->
+     <center>
+    <div class="search-container mt-5">
+        <form method="GET" action="{% url 'blogs:blog_search' %}" class="pt-4">
+            {% csrf_token %}
+            <input type="text" name="q" class="search-box" placeholder="Search for blogs...">
+            <button type="submit" class="btn btn-success">Search</button>
+        </form>
+    </div>
+    </center>
     <section id="hero-slider" class="hero-slider">
         <div class="container-md" data-aos="zoom-in">
             <div class="row">
