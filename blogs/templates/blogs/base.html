@@ -75,7 +75,6 @@
           <li><a href="{% url 'blogs:categories'%}">Categories</a></li>
           {% if request.user.is_authenticated %}
           <li><a href="{% url 'blogs:my-posts'%}">My Posts</a></li>
-          <li><a href="{% url 'blogs:logout'%}">logout</a></li>
           {% else %}
           <li><a href="{% url 'blogs:register'%}">SignUp</a></li>
           {% endif %}
@@ -138,7 +137,7 @@
     <div class="profile-modal-content">
       <span class="close-profile">&times;</span>
       <div class="profile-header">
-        <a href="{% url 'blogs:logout'%}"><button class="btn btn-secondary">Logout</button></a>
+        <a href="{% url 'blogs:logout'%}"><button class="btn btn-success mb-3">Logout</button></a>
         <h2>My Profile</h2>
       </div>
       <div class="profile-body">
