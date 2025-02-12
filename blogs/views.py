@@ -30,6 +30,7 @@ from django.db.models import Q
 
 
 
+
 User = get_user_model()
 
 def analytics_dashboard(request):
@@ -410,6 +411,7 @@ def create_post(request):
             is_headline=False,
             to_slide=False
         )
+                
 
         # Add selected tags
         if tags_ids:
@@ -509,7 +511,7 @@ class BlogSearchView(ListView):
     model = Blog
     template_name = 'blogs/search_results.html'
     context_object_name = 'posts'
-    paginate_by = 10  # Define pagination limit
+    paginate_by = 4  # Define pagination limit
 
     def get_queryset(self):
         query = self.request.GET.get('q', '')

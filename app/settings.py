@@ -1,6 +1,7 @@
 from decouple import config
 import dj_database_url
 from pathlib import Path
+import django_daraja
 
 import pymysql
 pymysql.install_as_MySQLdb()
@@ -36,7 +37,9 @@ INSTALLED_APPS = [
     'rest_framework', 
     'channels',  # optional for real-time functionality
     'jwt',
-    'ckeditor'
+    'ckeditor',
+    'django_daraja',
+    'mpesa',
 ]
 
 MIDDLEWARE = [
@@ -182,10 +185,19 @@ CKEDITOR_CONFIGS = {
     },
 }
 
-MPESA_CONFIG = {
-    "CONSUMER_KEY": config('CONSUMER_KEY'),
-    "CONSUMER_SECRET": config('CONSUMER_SECRET'),
-    "BUSINESS_SHORTCODE": config('BUSINESS_SHORTCODE'),
-    "PASSKEY": config('PASSKEY'),
-    "CALLBACK_URL": config('CALLBACK_URL'),
-}
+OPENAI_API_KEY = config("OPENAI_API_KEY")
+
+DARAJA_CONSUMER_KEY = "your_consumer_key"
+DARAJA_CONSUMER_SECRET = "your_consumer_secret"
+DARAJA_SHORTCODE = "600998"  # Use 600998 for sandbox
+DARAJA_PASSKEY = "your_lipa_na_mpesa_passkey"
+DARAJA_ENVIRONMENT = "sandbox"  # Change to "production" when live
+
+MPESA_ENVIRONMENT = "sandbox"  # Change to "production" when live
+MPESA_CONSUMER_KEY = "your_consumer_key"
+MPESA_CONSUMER_SECRET = "your_consumer_secret"
+MPESA_SHORTCODE = "600998"  # Use test shortcode
+MPESA_PASSKEY = "your_lipa_na_mpesa_passkey"
+MPESA_CALLBACK_URL = "https://yourdomain.com/mpesa/stk-callback/"
+
+

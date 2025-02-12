@@ -14,6 +14,7 @@ from PIL import Image
 import os
 from django.core.files import File
 from io import BytesIO
+from django.core.files.base import ContentFile
 
 
 # User = get_user_model()
@@ -75,7 +76,7 @@ class Blog(models.Model):
     content = RichTextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    image = models.ImageField(upload_to='blogs', default='')
+    image = models.ImageField(upload_to='blogs', default='', blank=True)
     slug = models.SlugField(unique=True, blank=True)
     category = models.ForeignKey('Category', on_delete=models.CASCADE, blank=True, null=True)
     tags = models.ManyToManyField('Tag', related_name='blogs', blank=True)
@@ -85,15 +86,8 @@ class Blog(models.Model):
     is_headline = models.BooleanField(default=False)
     to_slide = models.BooleanField(default=False)
     rejection_reason = models.TextField(blank=True, null=True)
-    is_updated = models.BooleanField(default=False)
     last_updated = models.DateTimeField(auto_now=True)
-
-    def is_updated(self):
-        """Returns True if the post was modified after being approved."""
-        return self.is_approved and self.last_updated > self.created_at
-
-    is_updated.boolean = True
-    is_updated.short_description = "Updated?"
+    is_updated = models.BooleanField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -105,38 +99,44 @@ class Blog(models.Model):
                 count += 1
             self.slug = slug
 
-        # Ensure that self.pk exists before querying the database
-        if self.pk and Blog.objects.filter(pk=self.pk).exists():
-            original = Blog.objects.get(pk=self.pk)
-            if original.content != self.content or original.title != self.title:
-                self.is_published = False
-                self.is_approved = False
-                self.rejection_reason = None  # Clear rejection reason on update
+        # Ensure that self.pk exists before checking previous data
+        if self.pk:
+            original = Blog.objects.filter(pk=self.pk).first()
+            if original:
+                if original.content != self.content or original.title != self.title:
+                    self.is_published = False
+                    self.is_approved = False
+                    self.rejection_reason = None  # Clear rejection reason on update
 
-        super().save(*args, **kwargs)  # Save first to get the image path
-
-        # Convert uploaded image to WEBP format
-              # Check if the image is being uploaded
+        # Handle image conversion only if a new image is uploaded
         if self.image and not self.image.name.endswith(".webp"):
             img_path = self.image.path
-            img = Image.open(img_path)
 
-            # Convert to WEBP
-            webp_io = BytesIO()  # Memory buffer to store the new image
-            img.save(webp_io, "WEBP", quality=80)
+            try:
+                img = Image.open(img_path)
 
-            # Create a new File object
-            webp_filename = os.path.splitext(self.image.name)[0] + ".webp"
-            self.image.save(webp_filename, File(webp_io), save=False)
+                # Convert to WEBP
+                webp_io = BytesIO()
+                img.save(webp_io, "WEBP", quality=80)
 
-            # Delete the original image file
-            if os.path.exists(img_path):
-                os.remove(img_path)
+                # Generate new filename
+                webp_filename = os.path.splitext(self.image.name)[0] + ".webp"
 
-        super().save(*args, **kwargs)  # Save the model with the new image
+                # Replace the image in the model
+                self.image.save(webp_filename, ContentFile(webp_io.getvalue()), save=False)
+
+                # Delete the original image
+                if os.path.exists(img_path):
+                    os.remove(img_path)
+
+            except FileNotFoundError:
+                print(f"File {img_path} not found, skipping conversion.")
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
+
 
 
         
