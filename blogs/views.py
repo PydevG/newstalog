@@ -25,6 +25,8 @@ from django.utils.crypto import get_random_string
 from django.contrib.sites.shortcuts import get_current_site
 from .forms import *
 from django.utils.text import slugify
+from django.views.generic import ListView
+from django.db.models import Q
 
 
 
@@ -496,3 +498,20 @@ def privacyview(request):
 
 def guidelinesview(request):
     return render(request, "blogs/content-guidelines.html")
+
+class BlogSearchView(ListView):
+    model = Blog
+    template_name = 'blogs/search_results.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if query:
+            return Blog.objects.filter(
+                Q(title__icontains=query) | 
+                Q(content__icontains=query) |
+                Q(category__name__icontains=query) |
+                Q(tags__name__icontains=query),
+                is_published=True  # Only show published posts
+            ).distinct()
+        return Blog.objects.none()

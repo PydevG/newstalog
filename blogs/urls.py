@@ -27,6 +27,7 @@ urlpatterns = [
     path("update-profile/", views.update_profile, name="update_profile"),
     path('privacy-policy/', views.privacyview, name='privacy'),
     path('guidelines/', views.guidelinesview, name='guidelines'),
+    path('search/', views.BlogSearchView.as_view(), name='blog_search'),
 
 
 

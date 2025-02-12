@@ -70,7 +70,7 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a href="{% url 'blogs:Home'%}">Blog</a></li>
+          <li><a href="{% url 'blogs:Home'%}">Home</a></li>
           <li><a href="{% url 'blogs:about'%}">About</a></li>
           <li><a href="{% url 'blogs:categories'%}">Categories</a></li>
           {% if request.user.is_authenticated %}
@@ -138,6 +138,7 @@
     <div class="profile-modal-content">
       <span class="close-profile">&times;</span>
       <div class="profile-header">
+        <a href="{% url 'blogs:logout'%}"><button class="btn btn-secondary">Logout</button></a>
         <h2>My Profile</h2>
       </div>
       <div class="profile-body">
@@ -158,12 +159,9 @@
           <input type="email" id="email" name="email" value="{{ request.user.email }}" readonly>
 
           <label for="bio">Bio</label>
-          <textarea id="bio" name="bio">{{ request.user.profile.bio }}</textarea>
+          <textarea id="bio" name="bio" readonly>{{ request.user.profile.bio }}</textarea>
 
-          <label for="profileImage">Profile Picture</label>
-          <input type="file" id="profileImage" name="profileImage">
-
-          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <a href="{% url 'blogs:logout'%}"><button type="submit" class="btn btn-primary">Update Profile </button></a>
         </form>
       </div>
     </div>
@@ -278,6 +276,20 @@
         });
       });
     </script>
+
+        <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/67abda283a842732607d9fc0/1ijrkoc6e';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
 
 
     
