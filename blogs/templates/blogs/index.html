@@ -153,8 +153,7 @@
      <center>
     <div class="search-container mt-5">
         <form method="GET" action="{% url 'blogs:blog_search' %}" class="pt-4">
-            {% csrf_token %}
-            <input type="text" name="q" class="search-box" placeholder="Search for blogs...">
+            <input type="text" name="q" class="search-box mt-1" placeholder="Search for blogs...">
             <button type="submit" class="btn btn-success">Search</button>
         </form>
     </div>

@@ -74,6 +74,7 @@ def homeview(request):
     }
     return render(request, 'blogs/index.html', context)
 
+@login_required(login_url='blogs:login')
 def singlepostview(request, slug):
     if request.method == 'POST':
         if request.user.is_authenticated:
@@ -367,7 +368,7 @@ def user_posts(request):
     posts = Blog.objects.filter(author=request.user)
     return render(request, 'blogs/user_posts.html', {'posts': posts})
 
-@login_required
+@login_required(login_url='blogs:login')
 def delete_post(request, id):  # id is from the URL
     if request.method == "POST":
         post_id = request.POST.get("post_id")
@@ -432,12 +433,13 @@ def create_post(request):
     })
 
 
-@login_required
+@login_required(login_url='blogs:login')
 def edit_post(request, slug):
     blog = get_object_or_404(Blog, slug=slug)
 
     if request.user != blog.author:
-        return redirect('blog_list')
+        messages.error(request, "You dont have permissions to edit this post")
+        return redirect('blogs:Home')
 
     if request.method == "POST":
         form = BlogForm(request.POST, request.FILES, instance=blog)
@@ -474,7 +476,7 @@ def edit_post(request, slug):
         'tags': tags
     })
 
-@login_required
+@login_required(login_url='blogs:login')
 def update_profile(request):
     user_profile = request.user.profile  # Fetch the user's profile
 
@@ -548,7 +550,7 @@ class BlogSearchView(ListView):
 
 
 
-@login_required
+@login_required(login_url='blogs:login')
 def upgrade_to_premium(request):
     if request.method == "POST":
         request.user.is_premium = True

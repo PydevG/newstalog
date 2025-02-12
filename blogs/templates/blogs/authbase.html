@@ -47,15 +47,15 @@
            <!-- Django Messages -->
 
 
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="{ url 'blogs:Home'%}" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="{% static 'img/logo.png' %}" alt=""> -->
-        <h1>Stalog</h1>
+         <img src="{% static 'img/logo.png' %}" alt="">
+        {% comment %} <h1>Stalog</h1> {% endcomment %}
       </a>
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a href="{% url 'blogs:Home'%}">Blog</a></li>
+          <li><a href="{% url 'blogs:Home'%}">Home</a></li>
           <li><a href="{% url 'blogs:about'%}">About</a></li>
           <li><a href="{% url 'blogs:categories'%}">Categories</a></li>
           {% if request.user.is_authenticated %}

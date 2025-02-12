@@ -55,7 +55,7 @@
 {% block main %}
 <div class="auth-wrapper">
     <div class="form-container">
-        <h2 class="text-center mb-4">Sign Up</h2>
+        <h2 class="text-center mb-4 " style="color: darkblue;">Sign Up</h2>
         <form action="" method="POST">
             {% csrf_token %}
         {% if messages %}
@@ -97,9 +97,9 @@
                 <i class='bx bx-hide eye-icon'></i>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+            <button type="submit" class="btn btn-secondary w-100">Sign Up</button>
 
-            <p class="text-center mt-3">
+            <p class="text-center mt-3 text-secondary">
                 Already have an account? <a href="{% url 'blogs:login' %}">Login</a>
             </p>
 

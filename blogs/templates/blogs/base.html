@@ -122,8 +122,6 @@
 }
 
 
-   
-
 
 
   </style>
@@ -284,7 +282,65 @@
     </div>
   </div>
 </div>
+<!-- Cookie Consent Banner -->
+<style>
+  .cookie-consent {
+    position: fixed;
+    bottom: 0; /* Stays at the bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 800px;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 14px;
+    z-index: 9999; /* Makes sure it's above other elements */
+    border-radius: 10px 10px 0 0;
+}
 
+.cookie-consent button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.cookie-consent button:hover {
+    background-color: #45a049;
+}
+
+</style>
+<div id="cookie-consent" class="cookie-consent">
+    <p>
+        This website uses cookies to ensure you get the best experience on our website.
+        <a href="{% url 'blogs:privacy' %}" target="_blank">Learn more</a>
+    </p>
+    <button id="acceptCookies">Accept</button>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const cookieBanner = document.querySelector('.cookie-consent');
+    const acceptButton = document.querySelector('#acceptCookies');
+
+    // Check if the user already accepted cookies
+    if (localStorage.getItem('cookiesAccepted')) {
+        cookieBanner.style.display = 'none';
+    }
+
+    // When the user clicks "Accept"
+    acceptButton.addEventListener('click', function () {
+        cookieBanner.style.display = 'none';
+        localStorage.setItem('cookiesAccepted', true); // Remember choice
+    });
+});
+
+</script>
 
   <!-- ======= Footer ======= -->
 <footer id="footer" class="footer">
@@ -341,6 +397,8 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'js/main.js' %}"></script>
+  
+  
     <script>
     document.addEventListener("DOMContentLoaded", function () {
       const profileIcon = document.getElementById("profileIcon");
@@ -365,6 +423,7 @@
   </script>
 
     {% block jsimports %}
+
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const mobileNavToggle = document.querySelector(".mobile-nav-toggle");
