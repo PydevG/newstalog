@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = True
 
 
 
@@ -188,22 +188,8 @@ CKEDITOR_CONFIGS = {
     },
 }
 
-OPENAI_API_KEY = config("OPENAI_API_KEY")
 
-DARAJA_CONSUMER_KEY = "your_consumer_key"
-DARAJA_CONSUMER_SECRET = "your_consumer_secret"
-DARAJA_SHORTCODE = "600998"  # Use 600998 for sandbox
-DARAJA_PASSKEY = "your_lipa_na_mpesa_passkey"
-DARAJA_ENVIRONMENT = "sandbox"  # Change to "production" when live
-
-MPESA_ENVIRONMENT = "sandbox"  # Change to "production" when live
-MPESA_CONSUMER_KEY = "your_consumer_key"
-MPESA_CONSUMER_SECRET = "your_consumer_secret"
-MPESA_SHORTCODE = "600998"  # Use test shortcode
-MPESA_PASSKEY = "your_lipa_na_mpesa_passkey"
-MPESA_CALLBACK_URL = "https://yourdomain.com/mpesa/stk-callback/"
-
-CSRF_TRUSTED_ORIGINS = ['https://3a3d-41-89-96-143.ngrok-free.app', 'http://localhost']
+CSRF_TRUSTED_ORIGINS = ['https://ee95-41-89-96-143.ngrok-free.app', 'http://localhost']
 
 
 

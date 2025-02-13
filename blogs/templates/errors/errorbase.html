@@ -1,0 +1,227 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Stalog || Home</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+
+
+  <!-- Favicons -->
+  <link href="{% static 'img/logo.png'%}" rel="icon">
+
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'css/swiper-bundle.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/aos.css' %}" rel="stylesheet">
+
+  
+
+<!-- Cookie Consent Banner -->
+<style>
+  .cookie-consent {
+    position: fixed;
+    bottom: 0; /* Stays at the bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 800px;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 14px;
+    z-index: 9999; /* Makes sure it's above other elements */
+    border-radius: 10px 10px 0 0;
+}
+
+.cookie-consent button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.cookie-consent button:hover {
+    background-color: #45a049;
+}
+
+</style>
+<div id="cookie-consent" class="cookie-consent">
+    <p>
+        This website uses cookies to ensure you get the best experience on our website.
+        <a href="{% url 'blogs:privacy' %}" target="_blank">Learn more</a>
+    </p>
+    <button id="acceptCookies">Accept</button>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const cookieBanner = document.querySelector('.cookie-consent');
+    const acceptButton = document.querySelector('#acceptCookies');
+
+    // Check if the user already accepted cookies
+    if (localStorage.getItem('cookiesAccepted')) {
+        cookieBanner.style.display = 'none';
+    }
+
+    // When the user clicks "Accept"
+    acceptButton.addEventListener('click', function () {
+        cookieBanner.style.display = 'none';
+        localStorage.setItem('cookiesAccepted', true); // Remember choice
+    });
+});
+
+</script>
+
+  <!-- ======= Footer ======= -->
+<footer id="footer" class="footer">
+  
+  
+
+  <div class="footer-legal">
+    <div class="container">
+      
+      <div class="row">
+        <!-- Footer Links -->
+        <div class="col-lg-4 text-center text-lg-start mb-3">
+          <p><a href="{% url 'blogs:about' %}" class="footer-link-more">Learn More</a></p>
+          <p><a href="{% url 'blogs:privacy' %}" class="footer-link-more">Privacy Policy</a></p>
+          <p><a href="{% url 'blogs:guidelines' %}" class="footer-link-more">Content Guidelines</a></p>
+        </div>
+
+        <!-- Copyright & Credits -->
+        <div class="col-lg-4 text-center mb-3">
+          <div class="copyright">
+            &copy; <strong>Uncle P Edits</strong>. All Rights Reserved
+          </div>
+          <div class="credits">
+            Designed by <a href="#">Uncle P</a>
+          </div>
+        </div>
+
+        <!-- Social Links -->
+        <div class="col-lg-4 text-center text-lg-end">
+          <div class="social-links">
+            <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+            <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="google-plus"><i class="bi bi-skype"></i></a>
+            <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+        
+      </div>
+
+    </div>
+  </div>
+
+</footer>
+
+
+  <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'js/glightbox.min.js' %}"></script>
+  <script src="{% static 'js/aos.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'js/main.js' %}"></script>
+  
+  
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const profileIcon = document.getElementById("profileIcon");
+      const profileModal = document.getElementById("profileModal");
+      const closeProfile = document.querySelector(".close-profile");
+
+      profileIcon.addEventListener("click", function (event) {
+        event.preventDefault();
+        profileModal.style.right = "0";
+      });
+
+      closeProfile.addEventListener("click", function () {
+        profileModal.style.right = "-350px";
+      });
+
+      window.addEventListener("click", function (event) {
+        if (event.target === profileModal) {
+          profileModal.style.right = "-350px";
+        }
+      });
+    });
+  </script>
+
+    {% block jsimports %}
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const mobileNavToggle = document.querySelector(".mobile-nav-toggle");
+        const navbar = document.getElementById("navbar");
+
+        if (mobileNavToggle) {
+          mobileNavToggle.addEventListener("click", function () {
+            navbar.classList.toggle("navbar-mobile");
+
+            // Toggle icon between menu (bi-list) and close (bi-x)
+            if (navbar.classList.contains("navbar-mobile")) {
+              this.classList.remove("bi-list");
+              this.classList.add("bi-x");
+            } else {
+              this.classList.remove("bi-x");
+              this.classList.add("bi-list");
+            }
+          });
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener("click", function (event) {
+          if (!navbar.contains(event.target) && !mobileNavToggle.contains(event.target)) {
+            navbar.classList.remove("navbar-mobile");
+            mobileNavToggle.classList.remove("bi-x");
+            mobileNavToggle.classList.add("bi-list");
+          }
+        });
+      });
+    </script>
+
+        <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/67abda283a842732607d9fc0/1ijrkoc6e';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
+
+
+    
+  {% endblock jsimports %}
+
+</body>
+
+</html>

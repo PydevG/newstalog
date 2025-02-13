@@ -182,6 +182,10 @@ def contactview(request):
 # def dashboard(request):
 #     return render(request, 'blogs/dashboard.html')
 
+
+User = get_user_model()
+
+
 def registerview(request):
     if request.method == "POST":
         full_name = request.POST["full_name"]
@@ -204,19 +208,20 @@ def registerview(request):
         user.is_active = False  # User must verify email before login
         user.save()
 
-        # Generate a unique verification token
-        verification_token = get_random_string(50)
+        # Get or create profile
+        profile, created = Profile.objects.get_or_create(user=user)
 
+        # Generate and save new verification token
+        profile.generate_verification_token()
 
         # Generate email verification link
-        current_site = get_current_site(request)
-        verification_link = f"http://{current_site.domain}{reverse('blogs:verify_email', args=[verification_token])}"
+        verification_link = f"{request.scheme}://{request.get_host()}{reverse('blogs:verify_email', args=[profile.verification_token])}"
 
         # Send email verification
         email_sent = send_verification_email(email, verification_link)
 
         if email_sent:
-            messages.success(request, "Account created! Check your email to verify your account.")
+            messages.success(request, "Account created! Check your email to activate your account.")
         else:
             messages.error(request, "Failed to send verification email. Try again.")
 

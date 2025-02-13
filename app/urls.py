@@ -11,3 +11,17 @@ urlpatterns = [
     path("mpesa/", include("mpesa.urls")),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+from django.conf.urls import handler404, handler500
+from django.shortcuts import render
+
+# # Custom error views
+# def custom_404(request, exception):
+#     return render(request, 'errors/404.html', status=404)
+
+# def custom_500(request):
+#     return render(request, 'errors/500.html', status=500)
+
+# # Assign error handlers
+# handler404 = 'app.urls.custom_404'
+# handler500 = 'app.urls.custom_500'

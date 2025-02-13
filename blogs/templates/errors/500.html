@@ -1,0 +1,14 @@
+{% extends "errors/errorbase.html" %}  <!-- Extend your base template -->
+
+{% block title %} Server Error {% endblock %}
+
+{% block main %}
+<div style="text-align: center; padding: 50px;">
+    <h1 style="font-size: 5rem; color: #ff3333;">500</h1>
+    <h2>Something went wrong on our side.</h2>
+    <p>We're working on fixing it. Try again later.</p>
+    <a href="{% url 'blogs:Home' %}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+        Go Back Home
+    </a>
+</div>
+{% endblock main %}

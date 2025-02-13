@@ -15,6 +15,7 @@ import os
 from django.core.files import File
 from io import BytesIO
 from django.core.files.base import ContentFile
+from django.utils.crypto import get_random_string
 
 
 # User = get_user_model()
@@ -168,14 +169,29 @@ class Profile(models.Model):
     x = models.CharField(max_length=100, blank=True, null=True)
     instagram = models.CharField(max_length=100, blank=True, null=True)   
     tiktok = models.CharField(max_length=100, blank=True, null=True)
-    verification_token = models.CharField(max_length=100, blank=True, null=True)
+    
+    # Corrected token generation
+    verification_token = models.CharField(max_length=64, unique=True, default=str(uuid.uuid4()))
+    
     is_verified = models.BooleanField(default=False)
     
+    def generate_verification_token(self):
+        """Generates a truly unique verification token"""
+        while True:
+            token = uuid.uuid4().hex + get_random_string(length=8)
+            if not Profile.objects.filter(verification_token=token).exists():
+                self.verification_token = token
+                self.save()
+                break  # Exit loop once a unique token is found
 
+    def save(self, *args, **kwargs):
+        """Ensure verification token is always unique before saving"""
+        if not self.verification_token:
+            self.generate_verification_token()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.user.username} Profile'
-
 
     
 # Auto-delete old profile picture when a new one is uploaded

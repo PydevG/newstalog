@@ -1,0 +1,14 @@
+{% extends "errors/errorbase.html" %}  <!-- Extend your base template -->
+
+{% block title %} Page Not Found {% endblock %}
+
+{% block main %}
+<div style="text-align: center; padding: 50px;">
+    <h1 style="font-size: 5rem; color: #ff3333;">404</h1>
+    <h2>Oops! The page you're looking for doesn't exist.</h2>
+    <p>Maybe the page was removed, or you mistyped the URL.</p>
+    <a href="{% url 'blogs:Home' %}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+        Go Back Home
+    </a>
+</div>
+{% endblock main %}
