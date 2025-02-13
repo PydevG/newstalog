@@ -193,7 +193,7 @@
 
                 <!-- HEADLINES (LEFT) -->
                 <div class="col-lg-4">
-                    <h2 class="text-primary">HEADLINES</h2>
+                    <h2 class="text-danger">HEADLINES</h2>
                     {% for post in headline_posts %}
                     {% if post.is_approved and post.is_published %}
                     <div class="post-entry-1 lg">
@@ -225,7 +225,7 @@
 
                 <!-- POSTS (MIDDLE) -->
                 <div class="col-lg-5">
-                    <center><h2 class="text-primary ">Latest Blogs</h2></center>
+                    <center><h2 class="text-success ">Latest Blogs</h2></center>
                     <div class="row g-5">
                         {% for post in page_obj %}
                         <div class="col-md-6">

@@ -2,6 +2,7 @@
 {% load static %}
 {% block title %}
 <title>Stalog</title>
+<meta name="csrf-token" content="{{ csrf_token }}">
 {% endblock title %}
 
 {% block cssimports %}
@@ -71,6 +72,24 @@
 .social-icon.tiktok { color: #000; }  /* TikTok Black */
 .social-icon.instagram { color: #E4405F; }  /* Instagram Pink */
 
+.like-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+.like-btn i {
+    transition: transform 0.2s ease-in-out;
+}
+
+.like-btn:active i {
+    transform: scale(1.2);
+}
+
+
 </style>
 {% endblock cssimports %}
 
@@ -94,46 +113,50 @@
             
                         <div class="social-links mb-2">
                             <span class="pt-2">Follow me</span>
-                        {% if post.author.profile.facebook %}
-                            <a href="{{ post.author.profile.facebook }}" target="_blank" class="social-icon facebook">
-                                <i class="fab fa-facebook"></i>
-                            </a>
-                        {% else %}
-                            <a href="https://www.facebook.com" target="_blank" class="social-icon facebook">
-                                <i class="fab fa-facebook"></i>
-                            </a>
-                        {% endif %}
+                            {% if post.author.profile.facebook %}
+                                <a href="{{ post.author.profile.facebook }}" target="_blank" class="social-icon facebook">
+                                    <i class="fab fa-facebook"></i>
+                                </a>
+                            {% else %}
+                                <a href="https://www.facebook.com" target="_blank" class="social-icon facebook">
+                                    <i class="fab fa-facebook"></i>
+                                </a>
+                            {% endif %}
 
-                        {% if post.author.profile.twitter %}
-                            <a href="{{ post.author.profile.twitter }}" target="_blank" class="social-icon twitter">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                        {% else %}
-                            <a href="https://www.twitter.com" target="_blank" class="social-icon twitter">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                        {% endif %}
+                            {% if post.author.profile.twitter %}
+                                <a href="{{ post.author.profile.twitter }}" target="_blank" class="social-icon twitter">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            {% else %}
+                                <a href="https://www.twitter.com" target="_blank" class="social-icon twitter">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            {% endif %}
 
-                        {% if post.author.profile.tiktok %}
-                            <a href="{{ post.author.profile.tiktok }}" target="_blank" class="social-icon tiktok">
-                                <i class="fab fa-tiktok"></i>
-                            </a>
-                        {% else %}
-                            <a href="https://www.tiktok.com" target="_blank" class="social-icon tiktok">
-                                <i class="fab fa-tiktok"></i>
-                            </a>
-                        {% endif %}
+                            {% if post.author.profile.tiktok %}
+                                <a href="{{ post.author.profile.tiktok }}" target="_blank" class="social-icon tiktok">
+                                    <i class="fab fa-tiktok"></i>
+                                </a>
+                            {% else %}
+                                <a href="https://www.tiktok.com" target="_blank" class="social-icon tiktok">
+                                    <i class="fab fa-tiktok"></i>
+                                </a>
+                            {% endif %}
 
-                        {% if post.author.profile.instagram %}
-                            <a href="{{ post.author.profile.instagram }}" target="_blank" class="social-icon instagram">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                        {% else %}
-                            <a href="https://www.instagram.com" target="_blank" class="social-icon instagram">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                        {% endif %}
-                    </div>
+                            {% if post.author.profile.instagram %}
+                                <a href="{{ post.author.profile.instagram }}" target="_blank" class="social-icon instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                            {% else %}
+                                <a href="https://www.instagram.com" target="_blank" class="social-icon instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                            {% endif %}
+                            
+                            <!-- Like Button (Added After Social Icons) -->
+                       <a href="{% url 'blogs:author_profile' post.author.username %}"> <button  class="btn btn-success flex items-center space-x-1" data-bs-toggle="modal" data-bs-target="#guest-modal"> View Author
+                            </button></a>
+                        </div>
 
 
                         <h5 class="text-muted fst-italic">📖 Dive into this post...</h5>
@@ -313,5 +336,45 @@
     </section>
 </main>
 {% endblock main %}
-</body>
-</html>
+
+
+
+
+{% block jsimports %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".like-btn").forEach(button => {
+        button.addEventListener("click", function() {
+            const postId = this.getAttribute("data-post-id");
+            const likeIcon = document.getElementById(`like-icon-${postId}`);
+            const likesCount = document.getElementById(`likes-count-${postId}`);
+
+            fetch(`/like/${postId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector("meta[name='csrf-token']").content,
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.liked) {
+                    likeIcon.classList.remove("far");
+                    likeIcon.classList.add("fas", "text-danger-500");  // Change to filled heart and red color
+                } else {
+                    likeIcon.classList.remove("fas", "text-danger-500");
+                    likeIcon.classList.add("far");  // Change back to outlined heart
+                }
+                likesCount.innerText = data.likes_count;  // Update likes count
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    });
+});
+</script>
+
+
+    
+{% endblock jsimports %}
+    

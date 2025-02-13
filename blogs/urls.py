@@ -29,7 +29,10 @@ urlpatterns = [
     path('guidelines/', views.guidelinesview, name='guidelines'),
     path('search/', views.BlogSearchView.as_view(), name='blog_search'),
     path('upgrade-to-premium/', views.upgrade_to_premium, name='upgrade_to_premium'),
-    path('leaderboard/', views.leaderboard, name='leaderboard',),
+    path('leaderboard/', views.leaderboard, name='leaderboard'),
+    path('like/<int:post_id>/', views.like_post, name='like_post'),
+    path('author/<str:username>/', views.author_profile, name='author_profile'),
+    path('posts/<str:username>/', views.authorposts, name='authorposts')
 
 
 

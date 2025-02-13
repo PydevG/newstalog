@@ -49,7 +49,7 @@ class ProfileForm(forms.ModelForm):
         return url
     
     def clean_instagram(self):
-        url = (self.cleaned_data.get('x') or "").strip()
+        url = (self.cleaned_data.get('instagram') or "").strip()
         if url and not url.startswith("https://www.instagram.com/"):
             return f"https://www.instagram.com/{url.lstrip('/')}"
         return url

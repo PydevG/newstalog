@@ -152,3 +152,43 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
+
+
+
+// #like functionality
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".like-btn").forEach(button => {
+        button.addEventListener("click", function() {
+            const postId = this.dataset.postId;  // Use `dataset` instead of `getAttribute`
+            if (!postId) {
+                console.error("postId is not defined. Make sure the button has data-post-id.");
+                return;
+            }
+
+            const likeIcon = document.getElementById(`like-icon-${postId}`);
+            const likesCount = document.getElementById(`likes-count-${postId}`);
+
+            fetch(`/like/${postId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector("meta[name='csrf-token']").content,
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Server response:", data);  // Debugging log
+
+                if (data.liked) {
+                    likeIcon.classList.remove("far");
+                    likeIcon.classList.add("fas", "text-red-500");  // Fill heart and turn red
+                } else {
+                    likeIcon.classList.remove("fas", "text-red-500");
+                    likeIcon.classList.add("far");  // Outline heart
+                }
+                likesCount.innerText = data.likes_count;
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    });
+});

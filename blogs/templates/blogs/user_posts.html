@@ -36,7 +36,8 @@
 
     <!-- Header with Create Post Button -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">My Blog Posts</h2>
+        <h2 class="fw-bold">My blogs</h2>
+        <h2><span class="text-success">{{no_of_posts}}</span> Posts</h2>
         <a href="{% url 'blogs:create-post' %}" class="btn btn-success">
             <i class="bx bx-plus-circle"></i> Create Post
         </a>
@@ -63,7 +64,7 @@
                         <td>{{ updated_post.title }}</td>
                         <td>{{ updated_post.updated_at|date:"M d, Y" }}</td>
                         <td>
-                            <a href="{% url 'blogs:review_update' updated_post.id %}" class="btn btn-sm btn-primary">
+                            <a href="{% url 'blogs:my-posts' %}" class="btn btn-sm btn-primary">
                                 <i class="bx bx-check-circle"></i> Review Update
                             </a>
                         </td>

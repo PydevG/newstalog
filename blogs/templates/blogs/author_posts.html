@@ -1,7 +1,7 @@
-{% extends 'blogs/index.html' %}
+{% extends 'blogs/base.html' %}
 {% load static %}
 {% block title %}
-<title>StaBlog - Search Results</title>
+<title>StaBlog|Author posts</title>
 {% endblock title %}
 
 <body>
@@ -13,7 +13,7 @@
                 <!-- ======= Blog Posts Section ======= -->
                 <div class="col-md-9" data-aos="fade-up">
                     <h3 class="category-title text-primary border-bottom pb-2">
-                        <i class="bi bi-search"></i> Posts by {{ page_obj.author.username }}
+                        <i class="bi bi-search"></i> Search Results for "{{ query }}"
                     </h3>
 
                     {% if page_obj %}

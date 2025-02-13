@@ -366,7 +366,9 @@ def verify_email(request, token):
 @login_required(login_url='blogs:login')
 def user_posts(request):
     posts = Blog.objects.filter(author=request.user)
-    return render(request, 'blogs/user_posts.html', {'posts': posts})
+    updated_posts = Blog.objects.filter(is_approved=False, author=request.user, is_updated=True)
+    no_of_posts = Blog.objects.filter(author=request.user).count()
+    return render(request, 'blogs/user_posts.html', {'posts': posts, 'updated_posts':updated_posts, 'no_of_posts':no_of_posts,})
 
 @login_required(login_url='blogs:login')
 def delete_post(request, id):  # id is from the URL
@@ -410,7 +412,8 @@ def create_post(request):
             is_trending=False,
             is_approved=False,
             is_headline=False,
-            to_slide=False
+            to_slide=False,
+            is_updated=True,
         )
                 
 
@@ -458,6 +461,7 @@ def edit_post(request, slug):
             # Mark original post as under review
             blog.is_approved = False
             blog.is_published = False
+            blog.is_updated = True
             blog.save()
 
             messages.success(request, "Your post update has been submitted for review.")
@@ -579,5 +583,59 @@ def leaderboard(request):
 
     return render(request, 'blogs/leaderboard.html', {'users': user_stats})
 
+@login_required(login_url='blogs:login')
+def like_post(request, post_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method"}, status=400)  # Handle invalid requests
+
+    post = get_object_or_404(Blog, id=post_id)
+
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+        liked = False
+    else:
+        post.likes.add(request.user)
+        liked = True
+
+    return JsonResponse({"liked": liked, "likes_count": post.likes.count()})
 
 
+def user_profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    return JsonResponse({
+        "id": user.id,
+        "username": user.username,
+        "twitter": user.profile.twitter,  # Assuming you have a Profile model
+        "x":user.profile.x,
+        "tiktok": user.profile.tiktok,
+        "instagram":user.profile.instagram,
+    })
+    
+def author_profile(request, username):
+    author = get_object_or_404(User, username=username)
+    user_profile = author.profile  # Fetch the user's profile
+
+
+    social_links = {
+        "Facebook": {"prefix": "https://www.facebook.com/", "value": user_profile.facebook if user_profile.facebook else ""},
+        "Twitter": {"prefix": "https://www.twitter.com/", "value": user_profile.twitter if user_profile.twitter else ""},
+        "X": {"prefix": "https://www.x.com/", "value": user_profile.x if user_profile.x else ""},
+        "Instagram": {"prefix": "https://www.instagram.com/", "value": user_profile.instagram if user_profile.instagram else ""},
+        "TikTok": {"prefix": "https://www.tiktok.com/@", "value": user_profile.tiktok if user_profile.tiktok else ""}
+    }
+    
+    return render(request, 'blogs/author_profile.html', {'author': author,'social_links':social_links})
+
+def authorposts(request, username):
+    author_posts = Blog.objects.filter(author__username=username)
+    user = get_object_or_404(User, username=username)
+    paginator = Paginator(author_posts, 4)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "author_posts":author_posts,
+        'page_obj':page_obj,
+
+    }
+    return render(request, 'blogs/author_posts.html', context)
