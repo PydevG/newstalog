@@ -615,16 +615,17 @@ def author_profile(request, username):
     author = get_object_or_404(User, username=username)
     user_profile = author.profile  # Fetch the user's profile
 
-
-    social_links = {
-        "Facebook": {"prefix": "https://www.facebook.com/", "value": user_profile.facebook if user_profile.facebook else ""},
-        "Twitter": {"prefix": "https://www.twitter.com/", "value": user_profile.twitter if user_profile.twitter else ""},
-        "X": {"prefix": "https://www.x.com/", "value": user_profile.x if user_profile.x else ""},
-        "Instagram": {"prefix": "https://www.instagram.com/", "value": user_profile.instagram if user_profile.instagram else ""},
-        "TikTok": {"prefix": "https://www.tiktok.com/@", "value": user_profile.tiktok if user_profile.tiktok else ""}
+    # Attach social links inside the profile object
+    user_profile.social_links = {
+        "Facebook": f"{user_profile.facebook}" if user_profile.facebook else "",
+        "Twitter": f"{user_profile.twitter}" if user_profile.twitter else "",
+        "X": f"{user_profile.x}" if user_profile.x else "",
+        "Instagram": f"{user_profile.instagram}" if user_profile.instagram else "",
+        "TikTok": f"{user_profile.tiktok}" if user_profile.tiktok else ""
     }
-    
-    return render(request, 'blogs/author_profile.html', {'author': author,'social_links':social_links})
+
+    return render(request, 'blogs/author_profile.html', {'author': author})
+
 
 def authorposts(request, username):
     author_posts = Blog.objects.filter(author__username=username)
@@ -636,6 +637,7 @@ def authorposts(request, username):
     context = {
         "author_posts":author_posts,
         'page_obj':page_obj,
+        'user':user,
 
     }
     return render(request, 'blogs/author_posts.html', context)
