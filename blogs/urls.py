@@ -32,7 +32,11 @@ urlpatterns = [
     path('leaderboard/', views.leaderboard, name='leaderboard'),
     path('like/<int:post_id>/', views.like_post, name='like_post'),
     path('author/<str:username>/', views.author_profile, name='author_profile'),
-    path('posts/<str:username>/', views.authorposts, name='authorposts')
+    path('posts/<str:username>/', views.authorposts, name='authorposts'),
+    path("pesapal/callback/", views.pesapal_callback, name="pesapal_callback"),
+    path("premium/success/", views.premium_success, name="premium_success"),
+    path("premium/failed/", views.premium_failed, name="premium_failed"),
+    path("pesapal/stkpush/", views.pesapal_stk_push, name="pesapal_stk_push"),
 
 
 

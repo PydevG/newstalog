@@ -8,12 +8,11 @@ urlpatterns = [
     path('blogs/', include('blogs.urls')),
     path('django_plotly_dash/', include('django_plotly_dash.urls', namespace='the_django_plotly_dash')),
     path('accounts/', include('allauth.urls')),
-    path("mpesa/", include("mpesa.urls")),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-from django.conf.urls import handler404, handler500
-from django.shortcuts import render
+# from django.conf.urls import handler404, handler500
+# from django.shortcuts import render
 
 # # Custom error views
 # def custom_404(request, exception):

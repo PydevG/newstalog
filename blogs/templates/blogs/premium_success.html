@@ -1,0 +1,133 @@
+{% extends "blogs/base.html" %}
+
+{% block cssimports %}
+<style>
+/* Premium UI Enhancements */
+.premium-container {
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.premium-title {
+    font-size: 2rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, gold, darkgoldenrod);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.premium-description {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.premium-list {
+    list-style: none;
+    padding: 0;
+}
+
+.premium-list li {
+    font-size: 1rem;
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.premium-list li i {
+    color: gold;
+    margin-right: 8px;
+}
+
+.upgrade-btn {
+    background: linear-gradient(45deg, gold, darkgoldenrod);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(218, 165, 32, 0.4);
+    cursor: pointer;
+}
+
+.upgrade-btn:hover {
+    background: linear-gradient(45deg, darkgoldenrod, gold);
+    transform: scale(1.05);
+}
+
+/* Hide phone number field initially */
+#phone-number-container {
+    display: none;
+    margin-top: 15px;
+}
+
+.phone-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+/* Loader styles */
+#processing-message {
+    display: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ff9800;
+    margin-top: 20px;
+}
+
+.confirm-btn {
+    background: darkgoldenrod;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.confirm-btn:hover {
+    background: gold;
+    transform: scale(1.05);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .premium-container {
+        width: 90%;
+        padding: 20px;
+    }
+    .premium-title {
+        font-size: 1.7rem;
+    }
+    .premium-description {
+        font-size: 1rem;
+    }
+}
+</style>
+{% endblock cssimports %}
+
+{% block main %}
+<div class="container d-flex justify-content-center align-items-center mt-3" style="min-height: 70vh;">
+    <div class="premium-container mt-5">
+        <h2 class="text-success">🎉 Payment Successful!</h2>
+    <p>Congratulations! Your premium upgrade was successful.</p>
+    <a href="{% url 'blogs:Home' %}" class="btn btn-primary">Go to Home</a>
+    </div>
+
+{% endblock main %}

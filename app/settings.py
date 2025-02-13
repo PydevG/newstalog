@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'jwt',
     'ckeditor',
     'django_daraja',
-    'mpesa',
 ]
 
 MIDDLEWARE = [
@@ -190,6 +189,13 @@ CKEDITOR_CONFIGS = {
 
 
 CSRF_TRUSTED_ORIGINS = ['https://ee95-41-89-96-143.ngrok-free.app', 'http://localhost']
+
+TINYPESA_API_KEY = config('TINYPESA_API_KEY')
+
+PESAPAL_CONSUMER_KEY = config('PESAPAL_CONSUMER_KEY')
+PESAPAL_CONSUMER_SECRET = config('PESAPAL_CONSUMER_SECRET')
+PESAPAL_CALLBACK_URL = "https://ee95-41-89-96-143.ngrok-free.app/blogs/pesapal/callback"
+PESAPAL_TEST_MODE = True  
 
 
 
