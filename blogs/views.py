@@ -559,3 +559,25 @@ def upgrade_to_premium(request):
         return redirect("blogs:Home")
 
     return render(request, "blogs/upgrade.html")
+
+def leaderboard(request):
+    users = User.objects.all()
+
+    ranked_users = sorted(users, key=lambda u: (
+        u.blog_set.count(),  # Number of blogs
+        sum(blog.likes.count() for blog in u.blog_set.all()),  # Total likes on blogs
+    ), reverse=True)
+
+    user_stats = []
+    for user in ranked_users:
+        total_likes = sum(blog.likes.count() for blog in user.blog_set.all())
+        user_stats.append({
+            'user': user,
+            'blog_count': user.blog_set.count(),
+            'total_likes': total_likes
+        })
+
+    return render(request, 'blogs/leaderboard.html', {'users': user_stats})
+
+
+

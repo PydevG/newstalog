@@ -1,0 +1,194 @@
+{% extends 'blogs/leaderbase.html' %}
+{% load static %}
+
+{% block cssimports %}
+<style>
+/* Glassmorphism Background */
+.leaderboard-container {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 20px;
+}
+
+/* Premium Look for the Title */
+.leaderboard-title {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    background: linear-gradient(135deg, #FFD700, #FF8C00);
+    padding: 12px;
+    border-radius: 12px;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+    box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.6);
+}
+
+/* Premium Highlight for Top 3 */
+.rank-gold { color: #FFD700; font-size: 1.5rem; }
+.rank-silver { color: #C0C0C0; font-size: 1.4rem; }
+.rank-bronze { color: #CD7F32; font-size: 1.3rem; }
+
+/* Smooth Table Styling */
+.leaderboard-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.leaderboard-table thead tr {
+    background: linear-gradient(90deg, #0066ff, #8a2be2);
+    color: white;
+}
+
+.leaderboard-table tbody tr {
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.leaderboard-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.02);
+}
+
+/* Premium Badge */
+.premium-badge {
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 12px;
+    background-color: gold;
+    color: black;
+    font-weight: bold;
+    box-shadow: 0px 4px 6px rgba(255, 215, 0, 0.5);
+}
+
+/* Soft Entry Animation */
+.fade-in {
+    animation: fadeInUp 0.8s ease-in-out;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+{% endblock cssimports %}
+
+{% block title %}Leaderboard 🏆{% endblock %}
+
+{% block main %}
+<div class="flex justify-center items-center min-h-screen pt-20">
+    <div class="leaderboard-container w-full max-w-4xl fade-in mt-5">
+        
+        <!-- Leaderboard Title -->
+        <h2 class="leaderboard-title mt-5">Leaderboard 🏆</h2>
+
+        <!-- Table Wrapper -->
+        <div class="overflow-hidden mt-6">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th class="px-6 py-3 text-left">Rank</th>
+                        <th class="px-6 py-3 text-left">User</th>
+                        <th class="px-6 py-3 text-left">Blogs</th>
+                        <th class="px-6 py-3 text-left">Likes</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-200 text-lg">
+                    {% for user_data in users %}
+                    <tr class="transition-all">
+                        <td class="px-6 py-4 font-bold text-xl">
+                            {% if forloop.counter == 1 %} <span class="rank-gold">🥇</span> 
+                            {% elif forloop.counter == 2 %} <span class="rank-silver">🥈</span> 
+                            {% elif forloop.counter == 3 %} <span class="rank-bronze">🥉</span> 
+                            {% else %} #{{ forloop.counter }} {% endif %}
+                        </td>
+                        <td class="px-6 py-4 font-semibold">
+                            {{ user_data.user.username }}
+                            {% if user_data.is_premium %}
+                            <span class="premium-badge">PREMIUM</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4">{{ user_data.blog_count }}</td>
+                        <td class="px-6 py-4 font-semibold text-yellow-300">{{ user_data.total_likes }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-4 text-center text-gray-400">No leaderboard data available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+{% endblock main %}
+
+{% block jsimports %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const profileIcon = document.getElementById("profileIcon");
+        const profileModal = document.getElementById("profileModal");
+        const closeProfile = document.querySelector(".close-profile");
+
+        profileIcon.addEventListener("click", function (event) {
+            event.preventDefault();
+            profileModal.style.right = "0";
+        });
+
+        closeProfile.addEventListener("click", function () {
+            profileModal.style.right = "-350px";
+        });
+
+        window.addEventListener("click", function (event) {
+            if (event.target === profileModal) {
+                profileModal.style.right = "-350px";
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const mobileNavToggle = document.querySelector(".mobile-nav-toggle");
+        const navbar = document.getElementById("navbar");
+
+        if (mobileNavToggle) {
+            mobileNavToggle.addEventListener("click", function () {
+                navbar.classList.toggle("navbar-mobile");
+
+                if (navbar.classList.contains("navbar-mobile")) {
+                    this.classList.remove("bi-list");
+                    this.classList.add("bi-x");
+                } else {
+                    this.classList.remove("bi-x");
+                    this.classList.add("bi-list");
+                }
+            });
+        }
+
+        document.addEventListener("click", function (event) {
+            if (!navbar.contains(event.target) && !mobileNavToggle.contains(event.target)) {
+                navbar.classList.remove("navbar-mobile");
+                mobileNavToggle.classList.remove("bi-x");
+                mobileNavToggle.classList.add("bi-list");
+            }
+        });
+    });
+</script>
+
+<!-- Start of Tawk.to Script -->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/67abda283a842732607d9fc0/1ijrkoc6e';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!-- End of Tawk.to Script -->
+{% endblock jsimports %}

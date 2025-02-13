@@ -88,6 +88,10 @@ class Blog(models.Model):
     rejection_reason = models.TextField(blank=True, null=True)
     last_updated = models.DateTimeField(auto_now=True)
     is_updated = models.BooleanField(blank=True, null=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_blogs", blank=True)  # Add this field
+    
+    def total_likes(self):
+        return self.likes.count()
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -275,3 +279,26 @@ class UpdatedPost(models.Model):
 
     def __str__(self):
         return f"Updated: {self.title}"
+
+
+class Badge(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.TextField()
+    icon = models.ImageField(upload_to='badges/', null=True, blank=True)  # Badge Image
+    criteria = models.CharField(max_length=50, choices=[
+        ('posts', 'Number of Posts'),
+        ('likes', 'Total Likes'),
+        ('comments', 'Total Comments'),
+    ])
+    threshold = models.IntegerField()  # The number required to earn the badge
+
+    def __str__(self):
+        return self.name
+
+class UserBadge(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    badge = models.ForeignKey(Badge, on_delete=models.CASCADE)
+    awarded_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.badge.name}"

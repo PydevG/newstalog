@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from .models import Profile, Blog
+from .models import Profile, Blog, Badge, UserBadge, Comment
 
 User = get_user_model()
 
@@ -28,3 +28,22 @@ def delete_post_image(sender, instance, **kwargs):
         instance.image.delete(save=False)  # Ensure safe deletion
 
 
+@receiver(post_save, sender=Blog)
+def check_post_badges(sender, instance, created, **kwargs):
+    if created:
+        user = instance.author
+        post_count = Post.objects.filter(author=user).count()
+
+        for badge in Badge.objects.filter(criteria="posts"):
+            if post_count >= badge.threshold:
+                UserBadge.objects.get_or_create(user=user, badge=badge)
+
+@receiver(post_save, sender=Comment)
+def check_comment_badges(sender, instance, created, **kwargs):
+    if created:
+        user = instance.user
+        comment_count = Comment.objects.filter(user=user).count()
+
+        for badge in Badge.objects.filter(criteria="comments"):
+            if comment_count >= badge.threshold:
+                UserBadge.objects.get_or_create(user=user, badge=badge)

@@ -29,6 +29,7 @@ urlpatterns = [
     path('guidelines/', views.guidelinesview, name='guidelines'),
     path('search/', views.BlogSearchView.as_view(), name='blog_search'),
     path('upgrade-to-premium/', views.upgrade_to_premium, name='upgrade_to_premium'),
+    path('leaderboard/', views.leaderboard, name='leaderboard',),
 
 
 
