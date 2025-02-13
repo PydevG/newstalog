@@ -1,42 +1,27 @@
-import sib_api_v3_sdk
+from django.core.mail import send_mail
 from django.conf import settings
-from sib_api_v3_sdk.rest import ApiException
 
 def send_verification_email(user_email, verification_link):
     """
-    Sends an email verification link to the user via Brevo.
+    Sends an email verification link to the user via Zoho Mail SMTP.
     """
-    # Configure Brevo API
-    configuration = sib_api_v3_sdk.Configuration()
-    configuration.api_key["api-key"] = settings.BREVO_API_KEY
-
-    # Create API instance
-    api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
-
-    # Define sender and recipient
-    sender = {"name": "My Website", "email": "no-reply@mywebsite.com"}  # Change this to your sender email
-    recipient = [{"email": user_email}]
-
-    # Email content
-    subject = "Verify Your Email - My Website"
+    subject = "Verify Your Email - Stalog"
     html_content = f"""
-    <h2>Welcome to My Website!</h2>
+    <h2>Welcome to Stalog!</h2>
     <p>Click the link below to verify your email:</p>
     <a href="{verification_link}" style="display:inline-block;padding:10px 20px;background:#007bff;color:white;text-decoration:none;border-radius:5px;">Verify Email</a>
     <p>If you didn't request this, you can ignore this email.</p>
     """
 
-    # Create the email data
-    email_data = sib_api_v3_sdk.SendSmtpEmail(
-        sender=sender,
-        to=recipient,
+    # Send email using Zoho SMTP
+    email_sent = send_mail(
         subject=subject,
-        html_content=html_content,
+        message="",  # Django requires a plain text version, but we only use HTML here
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[user_email],
+        html_message=html_content,  # Send HTML content
+        fail_silently=False,  # Set to False for debugging
     )
 
-    try:
-        api_instance.send_transac_email(email_data)
-        return True  # Email sent successfully
-    except ApiException as e:
-        print("Error sending verification email:", e)
-        return False  # Email sending failed
+    return email_sent > 0  # Returns True if at least one email was sent
+

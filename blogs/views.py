@@ -235,7 +235,7 @@ def userlogin(request):
 
 		if user is not None:
 			login(request, user)
-			return redirect('blogs:Home')
+			return redirect('blogs:update_profile')
 
 		else:
 			messages.error(request, "Invalid credentials")
@@ -297,7 +297,7 @@ def reset_password(request, reset_id):
         password_reset = PasswordReset.objects.get(reset_id=reset_id)
 
         if request.method == 'POST':
-            newPassword = request.POST.get('newpassword')
+            newPassword = request.POST.get('password')
             confirmPassword = request.POST.get('confirmpassword')
 
             passwords_have_error = False
@@ -489,7 +489,7 @@ def update_profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Your profile has been updated successfully!")
-            return redirect('blogs:update_profile')
+            return redirect('blogs:Home')
 
     else:
         form = ProfileForm(instance=user_profile)
@@ -573,7 +573,7 @@ def leaderboard(request):
     ), reverse=True)
 
     user_stats = []
-    for user in ranked_users:
+    for user in ranked_users[:10]:  # Get only the top 10 users
         total_likes = sum(blog.likes.count() for blog in user.blog_set.all())
         user_stats.append({
             'user': user,
@@ -582,6 +582,7 @@ def leaderboard(request):
         })
 
     return render(request, 'blogs/leaderboard.html', {'users': user_stats})
+
 
 @login_required(login_url='blogs:login')
 def like_post(request, post_id):
@@ -614,6 +615,8 @@ def user_profile(request, user_id):
 def author_profile(request, username):
     author = get_object_or_404(User, username=username)
     user_profile = author.profile  # Fetch the user's profile
+    no_of_posts = Blog.objects.filter(author=author).count()
+
 
     # Attach social links inside the profile object
     user_profile.social_links = {
@@ -624,7 +627,7 @@ def author_profile(request, username):
         "TikTok": f"{user_profile.tiktok}" if user_profile.tiktok else ""
     }
 
-    return render(request, 'blogs/author_profile.html', {'author': author})
+    return render(request, 'blogs/author_profile.html', {'author': author, 'no_of_posts':no_of_posts,})
 
 
 def authorposts(request, username):
@@ -633,11 +636,14 @@ def authorposts(request, username):
     paginator = Paginator(author_posts, 4)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    no_of_posts = Blog.objects.filter(author=user).count()
+
 
     context = {
         "author_posts":author_posts,
         'page_obj':page_obj,
         'user':user,
+        'no_of_posts':no_of_posts,
 
     }
     return render(request, 'blogs/author_posts.html', context)
