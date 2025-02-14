@@ -1,5 +1,6 @@
 from django.core.mail import send_mail
 from django.conf import settings
+import requests
 
 def send_verification_email(user_email, verification_link):
     """
@@ -25,3 +26,28 @@ def send_verification_email(user_email, verification_link):
 
     return email_sent > 0  # Returns True if at least one email was sent
 
+
+
+def get_pesapal_token():
+    url = "https://pay.pesapal.com/v3/api/Auth/RequestToken"
+    
+    headers = {"Content-Type": "application/json"}
+    
+    data = {
+        "consumer_key": settings.PESAPAL_CONSUMER_KEY,
+        "consumer_secret": settings.PESAPAL_CONSUMER_SECRET
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=data)
+        response_data = response.json()
+
+        print("Pesapal Token Response:", response_data)  # Debugging
+
+        if response.status_code == 200 and "token" in response_data:
+            return response_data["token"]
+        else:
+            return None
+    except Exception as e:
+        print("Error fetching Pesapal token:", e)
+        return None

@@ -124,7 +124,7 @@
 
 {% block main %}
 <div class="container d-flex justify-content-center align-items-center mt-3" style="min-height: 70vh;">
-    <div class="premium-container mt-5">
+    <div class="premium-container mt-5 pt-5">
         <h2 class="premium-title mt-5">Upgrade to Premium 🚀</h2>
         <p class="premium-description">For only <b>50 KES</b>, unlock exclusive benefits:</p>
         <ul class="premium-list">
@@ -133,66 +133,55 @@
             <li><i class="bi bi-graph-up-arrow"></i> Increased visibility & engagement</li>
         </ul>
 
-        <button class="upgrade-btn mt-3 mb-4" id="upgrade-btn">Upgrade Now</button>
+        <button class="upgrade-btn mt-3 mb-4" id="upgrade-btn">Coming soon</button>
 
-        <!-- Phone Number Input Field (Initially Hidden) -->
-        <form action="" id="pesapalForm" method="POST">
-            {% csrf_token %}
-        <div id="phone-number-container">
-            <input type="tel" id="phone-number" name="phone_number" class="phone-input" placeholder="+254712345678" required>
-            <button type="submit" class="confirm-btn" id="confirm-btn">Confirm Upgrade</button>
-        </div>
-    </form>
-        <!-- Processing Message -->
+        
         <div id="processing-message">Processing... Confirm payment on your phone 📲</div>
     </div>
 </div>
 
-<script>
+{% comment %} <script>
 document.addEventListener("DOMContentLoaded", function() {
     const upgradeBtn = document.getElementById("upgrade-btn");
     const phoneContainer = document.getElementById("phone-number-container");
     const confirmBtn = document.getElementById("confirm-btn");
     const processingMessage = document.getElementById("processing-message");
     const phoneInput = document.getElementById("phone-number");
-    
-    if (upgradeBtn) {
-        upgradeBtn.addEventListener("click", function() {
-            phoneContainer.style.display = "block";
-            this.style.display = "none"; 
-        });
-    }
 
-    if (confirmBtn) {
-        confirmBtn.addEventListener("click", function() {
-            let phone = phoneInput.value.trim();
+    upgradeBtn.addEventListener("click", function() {
+        phoneContainer.style.display = "block";
+        this.style.display = "none"; 
+    });
 
-            if (!phone.startsWith("+254") || phone.length < 10) {
-                alert("Enter a valid phone number in international format (e.g. +254712345678)");
-                return;
-            }
+    confirmBtn.addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent default form submission
+        let phone = phoneInput.value.trim();
 
-            phoneContainer.style.display = "none";
-            processingMessage.style.display = "block";
+        if (!phone) {
+            alert("Please enter your phone number.");
+            return;
+        }
 
-            fetch("{% url 'blogs:pesapal_stk_push' %}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: JSON.stringify({ phone_number: phone })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.status === "success" ? "Payment request sent. Confirm on your phone." : "Payment failed. Try again.");
-                location.reload();
-            })
-            .catch(error => console.error("Error:", error));
-        });
-    }
+        phoneContainer.style.display = "none";
+        processingMessage.style.display = "block";
+
+        fetch("{% url 'blogs:pesapal_stk_push' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: new URLSearchParams({ "phone_number": phone })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message ? data.message : "Payment failed. Try again.");
+            location.reload();
+        })
+        .catch(error => console.error("Error:", error));
+    });
 });
-</script>
+</script> {% endcomment %}
 
 
 {% endblock main %}

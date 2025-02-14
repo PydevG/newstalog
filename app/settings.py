@@ -176,7 +176,6 @@ AUTHENTICATION_BACKENDS = [
     
 ]
 
-BREVO_API_KEY = config('API_KEY')
 
 
 CKEDITOR_CONFIGS = {
@@ -188,14 +187,16 @@ CKEDITOR_CONFIGS = {
 }
 
 
-CSRF_TRUSTED_ORIGINS = ['https://ee95-41-89-96-143.ngrok-free.app', 'http://localhost']
+CSRF_TRUSTED_ORIGINS = ['https://2c5e-41-89-96-143.ngrok-free.app', 'http://localhost']
 
-TINYPESA_API_KEY = config('TINYPESA_API_KEY')
 
-PESAPAL_CONSUMER_KEY = config('PESAPAL_CONSUMER_KEY')
-PESAPAL_CONSUMER_SECRET = config('PESAPAL_CONSUMER_SECRET')
-PESAPAL_CALLBACK_URL = "https://ee95-41-89-96-143.ngrok-free.app/blogs/pesapal/callback"
-PESAPAL_TEST_MODE = True  
+PESAPAL_CONSUMER_KEY = "TrbolXNi+Fh9hR+ZbNmtNNtSPGw7RPol"
+PESAPAL_CONSUMER_SECRET = "1zl2WOCxuPObCRsWoof12ou5HH4="
+PESAPAL_CALLBACK_URL = "https://2c5e-41-89-96-143.ngrok-free.app/blogs/pesapal/callback"
+PESAPAL_TEST_MODE = False
+
+SILENCED_SYSTEM_CHECKS = ["ckeditor.W001"]
+
 
 
 

@@ -19,7 +19,7 @@ from django.contrib.auth import get_user_model
 import requests
 import uuid
 from django.core.mail import send_mail
-from .utils import send_verification_email
+from .utils import send_verification_email, get_pesapal_token
 from django.utils.crypto import get_random_string
 from django.contrib.sites.shortcuts import get_current_site
 from .forms import *
@@ -28,6 +28,7 @@ from django.views.generic import ListView
 from django.db.models import Q
 import json
 from django.http import JsonResponse
+import time
 
 
 
@@ -398,7 +399,7 @@ def create_post(request):
     today_posts_count = Blog.objects.filter(author=request.user, created_at__date=now().date()).count()
 
     if request.method == "POST":
-        if today_posts_count >= 3:
+        if today_posts_count >= 2:
             messages.error(request, "You have reached the daily limit of 3 posts. Try again tomorrow!")
             return redirect("blogs:my-posts")
 
@@ -563,13 +564,8 @@ class BlogSearchView(ListView):
 
 @login_required(login_url='blogs:login')
 def upgrade_to_premium(request):
-    if request.method == "POST":
-        request.user.is_premium = True
-        request.user.save()
-        messages.success(request, "You have been upgraded to Premium!")
-        return redirect("blogs:Home")
-
     return render(request, "blogs/upgrade.html")
+
 
 def leaderboard(request):
     users = User.objects.all()
@@ -654,90 +650,3 @@ def authorposts(request, username):
 
     }
     return render(request, 'blogs/author_posts.html', context)
-
-
-#payment processing
-def get_pesapal_token():
-    url = "https://pay.pesapal.com/v3/api/Auth/RequestToken"
-    
-    headers = {
-        "Content-Type": "application/json"
-    }
-
-    data = {
-        "consumer_key": settings.PESAPAL_CONSUMER_KEY,
-        "consumer_secret": settings.PESAPAL_CONSUMER_SECRET
-    }
-
-    response = requests.post(url, headers=headers, json=data)
-    response_data = response.json()
-    
-    if response.status_code == 200 and "token" in response_data:
-        return response_data["token"]
-    return None
-
-
-@csrf_exempt
-def pesapal_stk_push(request):
-    if request.method == "POST":
-        phone_number = request.POST.get("phone_number")
-        amount = 50  # Amount in KES
-
-        token = get_pesapal_token()
-        if not token:
-            return JsonResponse({"error": "Failed to get Pesapal token"}, status=400)
-
-        url = "https://pay.pesapal.com/v3/api/MobilePayments/SubmitOrderRequest"
-        headers = {
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json",
-        }
-
-        payload = {
-            "Amount": str(amount),  # Pesapal requires amount as string
-            "PhoneNumber": phone_number,
-            "Currency": "KES",
-            "Description": "Premium Upgrade Payment",
-            "Reference": "PremiumUpgrade_" + str(request.user.id),
-            "CallbackURL": settings.PESAPAL_CALLBACK_URL,
-        }
-
-        response = requests.post(url, headers=headers, json=payload)
-        return JsonResponse(response.json())
-
-    return JsonResponse({"error": "Invalid request"}, status=400)
-
-
-    
-def premium_success(request):
-    return render(request, "blogs/premium_success.html")
-
-def premium_failed(request):
-    return render(request, "blogs/premium_failed.html")
-@csrf_exempt
-def pesapal_callback(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            transaction_id = data.get("transaction_id")
-            status = data.get("status")
-            phone_number = data.get("phone_number")
-
-            # Find the payment in the database
-            payment = PremiumPayment.objects.filter(transaction_id=transaction_id).first()
-
-            if payment:
-                payment.status = status  # Update status
-                payment.save()
-
-                if status == "COMPLETED":
-                    return redirect("blogs:premium_success")
-                else:
-                    return redirect("blogs:premium_failed")
-
-            return JsonResponse({"message": "Payment not found"}, status=404)
-
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
-
-    return JsonResponse({"message": "Invalid request"}, status=400)
