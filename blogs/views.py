@@ -534,6 +534,7 @@ class BlogSearchView(ListView):
                 Q(title__icontains=query) | 
                 Q(content__icontains=query) |
                 Q(category__name__icontains=query) |
+                Q(author__username__icontains=query) |
                 Q(tags__name__icontains=query),
                 is_published=True  # Only show published posts
             ).distinct()
