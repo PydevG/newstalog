@@ -83,12 +83,12 @@ WSGI_APPLICATION = 'stalog.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',  # Database name from Railway
-        'USER': 'postgres',  # Username from Railway
-        'PASSWORD': 'UlZhaEjbqrbrdVQOCpJLlSFrSLoIUmSU',  # Password from Railway
-        'HOST': 'autorack.proxy.rlwy.net',  # Host from Railway
-        'PORT': '50039',  # Port from Railway
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'defaultdb', 
+        'USER': 'avnadmin',
+        'PASSWORD': 'AVNS_5rI6iiEOKIRplxERTFO',
+        'HOST': "mysql-34f6e181-peterndindi41-b7ccstalog.h.aivencloud.com",
+        'PORT': '20522',
     }
 }
 
