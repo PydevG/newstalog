@@ -81,16 +81,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'stalog.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'defaultdb', 
-        'USER': 'avnadmin',
-        'PASSWORD': 'AVNS_5rI6iiEOKIRplxERTFO',
-        'HOST': "mysql-34f6e181-peterndindi41-b7ccstalog.h.aivencloud.com",
-        'PORT': '20522',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'defaultdb', 
+#         'USER': 'avnadmin',
+#         'PASSWORD': 'AVNS_5rI6iiEOKIRplxERTFO',
+#         'HOST': "mysql-34f6e181-peterndindi41-b7ccstalog.h.aivencloud.com",
+#         'PORT': '20522',
+#     }
+# }
 
 
 
