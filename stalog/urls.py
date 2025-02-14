@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('blogs/', include('blogs.urls')),
+    path('', include('blogs.urls')),
     path('django_plotly_dash/', include('django_plotly_dash.urls', namespace='the_django_plotly_dash')),
     path('accounts/', include('allauth.urls')),
 ]
@@ -22,5 +22,5 @@ urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 #     return render(request, 'errors/500.html', status=500)
 
 # # Assign error handlers
-# handler404 = 'app.urls.custom_404'
-# handler500 = 'app.urls.custom_500'
+# handler404 = 'stalog.urls.custom_404'
+# handler500 = 'stalog.urls.custom_500'

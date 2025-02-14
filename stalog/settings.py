@@ -187,7 +187,7 @@ CKEDITOR_CONFIGS = {
 }
 
 
-CSRF_TRUSTED_ORIGINS = ['https://cc54-41-89-96-143.ngrok-free.app', 'http://localhost']
+CSRF_TRUSTED_ORIGINS = ['https://stalog.cloud', 'https://newstalog.onrender.com']
 
 
 PESAPAL_CONSUMER_KEY = "TrbolXNi+Fh9hR+ZbNmtNNtSPGw7RPol"
@@ -208,6 +208,7 @@ cloudinary.config(
 )
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 
