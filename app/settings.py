@@ -2,9 +2,10 @@ from decouple import config
 import dj_database_url
 from pathlib import Path
 import django_daraja
-
+import os
 import pymysql
 pymysql.install_as_MySQLdb()
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 SECRET_KEY = config('SECRET_KEY')
-DEBUG = True
+DEBUG = False
 
 
 
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     'jwt',
     'ckeditor',
     'django_daraja',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -79,18 +82,15 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # Change this from 'postgresql' to 'mysql'
-        'NAME': 'blogs',
-        'USER': 'adminuser',
-        'PASSWORD': '@abc123AC',
-        'HOST': 'localhost',
-        'PORT': '3306',  # Default MySQL port
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'use_unicode': True,
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'railway',  # Database name from Railway
+        'USER': 'postgres',  # Username from Railway
+        'PASSWORD': 'UlZhaEjbqrbrdVQOCpJLlSFrSLoIUmSU',  # Password from Railway
+        'HOST': 'autorack.proxy.rlwy.net',  # Host from Railway
+        'PORT': '50039',  # Port from Railway
     }
 }
+
 
 
 
@@ -196,6 +196,18 @@ PESAPAL_CALLBACK_URL = "https://cc54-41-89-96-143.ngrok-free.app/blogs/pesapal/c
 PESAPAL_TEST_MODE = False
 
 SILENCED_SYSTEM_CHECKS = ["ckeditor.W001"]
+
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+cloudinary.config(
+    cloud_name=config("CLOUDINARY_NAME"),
+    api_key=config("CLOUDINARY_API_KEY"),
+    api_secret=config("CLOUDINARY_API_SECRET"),
+)
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 

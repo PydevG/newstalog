@@ -16,6 +16,7 @@ from django.core.files import File
 from io import BytesIO
 from django.core.files.base import ContentFile
 from django.utils.crypto import get_random_string
+from cloudinary.models import CloudinaryField
 
 
 # User = get_user_model()
@@ -77,7 +78,7 @@ class Blog(models.Model):
     content = RichTextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    image = models.ImageField(upload_to='blogs', default='', blank=True)
+    image = CloudinaryField('image')
     slug = models.SlugField(unique=True, blank=True)
     category = models.ForeignKey('Category', on_delete=models.CASCADE, blank=True, null=True)
     tags = models.ManyToManyField('Tag', related_name='blogs', blank=True)
@@ -162,7 +163,7 @@ class Comment(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    profile_picture = CloudinaryField()
     website = models.URLField(blank=True, null=True)
     facebook = models.CharField(max_length=100, blank=True, null=True)
     twitter = models.CharField(max_length=100, blank=True, null=True)
