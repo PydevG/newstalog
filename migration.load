@@ -1,8 +1,0 @@
-LOAD DATABASE
-     FROM mysql://adminuser:abc123AC@localhost/blogs
-     INTO postgresql://postgres:yourpassword@autorack.proxy.rlwy.net:50039/railway
-
- WITH include no drop, create tables, data only
-  SET work_mem to '16MB', maintenance_work_mem to '512 MB'
-  CAST type datetime to timestamp
-  ALTER SCHEMA 'blogs' RENAME TO 'public';
