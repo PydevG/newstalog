@@ -51,6 +51,8 @@
       <a href="{ url 'blogs:Home'%}" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
          <img src="{% static 'img/logo.png' %}" alt="">
+         <span style="color: mediumblue;">Stalog</span>
+
         {% comment %} <h1>Stalog</h1> {% endcomment %}
       </a>
 
@@ -74,7 +76,7 @@
         <a href="#" class="mx-2"><span class="bi-twitter"></span></a>
         <a href="#" class="mx-2"><span class="bi-instagram"></span></a>
 
-        <a href="#" class="mx-2 js-search-open"><span class="bi-search"></span></a>
+      <a href="{% url 'blogs:Home'%}" class="mx-2 js-search-open"><span class="bi bi-broadcast-pin"></span></a>
         <i class="bi bi-list mobile-nav-toggle"></i>
 
         <!-- ======= Search Form ======= -->

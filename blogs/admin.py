@@ -39,15 +39,15 @@ class ContactAdmin(admin.ModelAdmin):
                 )
                 messages.success(request, f"Reply sent to {obj.email}")
                 obj.reply = form.cleaned_data['reply']  # Save the reply in the database
-                obj.replied = True  # Mark as replied
+                obj.replied_status = True  # Mark as replied
             except Exception as e:
                 messages.error(request, f"Failed to send reply: {e}")
         super().save_model(request, obj, form, change)
 
     # Custom method to display the reply status with icons
     def replied_status(self, obj):
-        if obj.replied:
-            return format_html('<span style="color: green;" title="Replied">✔️</span>')
+        if obj.replied_status is True:
+            return format_html('<span style="color: green;" title="Replied">✅</span>')
         else:
             return format_html('<span style="color: red;" title="Not Replied">❌</span>')
 

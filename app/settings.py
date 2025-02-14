@@ -155,7 +155,7 @@ EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 EMAIL_USE_TLS = False
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = 'wyi9 qM1i V69h'
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
@@ -187,12 +187,12 @@ CKEDITOR_CONFIGS = {
 }
 
 
-CSRF_TRUSTED_ORIGINS = ['https://2c5e-41-89-96-143.ngrok-free.app', 'http://localhost']
+CSRF_TRUSTED_ORIGINS = ['https://cc54-41-89-96-143.ngrok-free.app', 'http://localhost']
 
 
 PESAPAL_CONSUMER_KEY = "TrbolXNi+Fh9hR+ZbNmtNNtSPGw7RPol"
 PESAPAL_CONSUMER_SECRET = "1zl2WOCxuPObCRsWoof12ou5HH4="
-PESAPAL_CALLBACK_URL = "https://2c5e-41-89-96-143.ngrok-free.app/blogs/pesapal/callback"
+PESAPAL_CALLBACK_URL = "https://cc54-41-89-96-143.ngrok-free.app/blogs/pesapal/callback"
 PESAPAL_TEST_MODE = False
 
 SILENCED_SYSTEM_CHECKS = ["ckeditor.W001"]
