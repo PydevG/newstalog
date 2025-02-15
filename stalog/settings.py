@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 SECRET_KEY = config('SECRET_KEY')
-DEBUG = False
+DEBUG = True
 
 
 
@@ -81,16 +81,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'stalog.wsgi.application'
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'defaultdb', 
-#         'USER': 'avnadmin',
-#         'PASSWORD': 'AVNS_5rI6iiEOKIRplxERTFO',
-#         'HOST': "mysql-34f6e181-peterndindi41-b7ccstalog.h.aivencloud.com",
-#         'PORT': '20522',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'defaultdb', 
+        'USER': 'avnadmin',
+        'PASSWORD': 'AVNS_5rI6iiEOKIRplxERTFO',
+        'HOST': "mysql-34f6e181-peterndindi41-b7ccstalog.h.aivencloud.com",
+        'PORT': '20522',
+    }
+}
 
 
 
