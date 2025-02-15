@@ -32,7 +32,7 @@ def delete_post_image(sender, instance, **kwargs):
 def check_post_badges(sender, instance, created, **kwargs):
     if created:
         user = instance.author
-        post_count = Post.objects.filter(author=user).count()
+        post_count = Blog.objects.filter(author=user).count()
 
         for badge in Badge.objects.filter(criteria="posts"):
             if post_count >= badge.threshold:
