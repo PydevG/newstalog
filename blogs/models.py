@@ -245,28 +245,28 @@ class CustomUser(AbstractUser):
         return self.username
     
     
-class PageVisit(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
-    session_key = models.CharField(max_length=40, blank=True, null=True, db_index=True)
-    ip_address = models.GenericIPAddressField()
-    url = models.CharField(max_length=500)
-    user_agent = models.TextField(blank=True, null=True)
-    referrer = models.TextField(blank=True, null=True)
-    start_time = models.DateTimeField(default=now)
-    end_time = models.DateTimeField(null=True, blank=True)
+# class PageVisit(models.Model):
+#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+#     session_key = models.CharField(max_length=40, blank=True, null=True, db_index=True)
+#     ip_address = models.GenericIPAddressField()
+#     url = models.CharField(max_length=500)
+#     user_agent = models.TextField(blank=True, null=True)
+#     referrer = models.TextField(blank=True, null=True)
+#     start_time = models.DateTimeField(default=now)
+#     end_time = models.DateTimeField(null=True, blank=True)
 
-    def time_spent(self):
-        """Calculate time spent on the page"""
-        if self.end_time:
-            return (self.end_time - self.start_time).total_seconds()
-        return None
+#     def time_spent(self):
+#         """Calculate time spent on the page"""
+#         if self.end_time:
+#             return (self.end_time - self.start_time).total_seconds()
+#         return None
 
-    def __str__(self):
-        user_info = self.user.username if self.user else f"Anonymous ({self.ip_address})"
-        return f"{user_info} visited {self.url}"
+#     def __str__(self):
+#         user_info = self.user.username if self.user else f"Anonymous ({self.ip_address})"
+#         return f"{user_info} visited {self.url}"
 
-    class Meta:
-        ordering = ['-start_time']
+#     class Meta:
+#         ordering = ['-start_time']
 
 
 class EmailVerification(models.Model):

@@ -11,15 +11,6 @@ from django.urls import reverse
 from django.middleware.csrf import get_token
 from django.http import HttpRequest
 
-@admin.register(PageVisit)
-class PageVisitAdmin(admin.ModelAdmin):
-    list_display = ('user', 'session_key', 'ip_address', 'url', 'start_time', 'end_time', 'time_spent')
-    list_filter = ('start_time', 'url')
-    search_fields = ('user__username', 'ip_address', 'url', 'session_key')
-    ordering = ('-start_time',)
-
-    def time_spent(self, obj):
-        return obj.time_spent()
     
 class ContactAdmin(admin.ModelAdmin):
     form = ContactMessageReplyForm

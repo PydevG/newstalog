@@ -55,7 +55,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
     # Other middlewares...
-    'blogs.tracking_middleware.PageVisitMiddleware',
     'allauth.account.middleware.AccountMiddleware',
 ]
 
